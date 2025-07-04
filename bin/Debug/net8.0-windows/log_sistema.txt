@@ -1,0 +1,65 @@
+[2025-06-27 00:06:50] ✅ Sede guardada: UNICENTRO
+[2025-06-27 00:06:59] 📡 Iniciando módulo de verificación de huella.
+[2025-06-27 00:07:02] 🧠 Procesando muestra de huella digital...
+[2025-06-27 00:07:03] ✅ Huella verificada: DIEGO ARMANDO ORTIZ MORA (80550594)
+[2025-06-27 00:07:03] 📝 Entrada registrada para DIEGO ARMANDO (80550594)
+[2025-06-27 00:07:09] 🧠 Procesando muestra de huella digital...
+[2025-06-27 00:07:10] ❌ Error verificando huella: 0xFFFFFFF8
+[2025-06-27 00:07:15] 🧠 Procesando muestra de huella digital...
+[2025-06-27 00:07:16] ❌ Error verificando huella: 0xFFFFFFF8
+[2025-06-27 00:07:26] 🧠 Procesando muestra de huella digital...
+[2025-06-27 00:07:27] ❌ Error verificando huella: 0xFFFFFFF8
+[2025-06-27 00:07:32] 🧠 Procesando muestra de huella digital...
+[2025-06-27 00:07:33] ❌ Error verificando huella: 0xFFFFFFF8
+[2025-06-27 00:07:38] 🧠 Procesando muestra de huella digital...
+[2025-06-27 00:07:39] ✅ Huella verificada: DIEGO ORTIZ (80550541)
+[2025-06-27 00:07:39] 📝 Entrada registrada para DIEGO (80550541)
+[2025-06-27 00:07:44] 🧠 Procesando muestra de huella digital...
+[2025-06-27 00:07:46] ❌ Error verificando huella: 0xFFFFFFF8
+[2025-06-27 00:07:49] 🧠 Procesando muestra de huella digital...
+[2025-06-27 00:07:50] ✅ Huella verificada: DIEGO ARMANDO ORTIZ MORA (80550594)
+[2025-06-27 00:07:50] ⚠️ DIEGO ARMANDO realizó una marcación fuera de horario. Se registrará como NOVEDAD.
+[2025-06-27 00:07:50] ⚠ DIEGO ARMANDO ya marcó hace 0 min 47 seg.
+⏳ Debe esperar 5 minutos.
+[2025-06-27 00:10:21] ✅ Versión registrada automáticamente: 1.0.1
+[2025-07-03 22:27:07] ❌ Error mostrando versión y fecha: Invalid object name 'VersionSistema'.
+[2025-07-03 22:27:07] ❌ Error registrando versión: Invalid object name 'VersionSistema'.
+[2025-07-03 22:28:05] 🔄 Abriendo formulario de Registro de Empleado
+[2025-07-03 22:28:21] 🏢 Empresa seleccionada: ID 10
+[2025-07-03 22:28:22] 🏢 Empresa seleccionada: ID 16
+[2025-07-03 22:28:22] 🏢 Empresa seleccionada: ID 5
+[2025-07-03 22:28:22] 🏢 Empresa seleccionada: ID 15
+[2025-07-03 22:28:23] 🏢 Empresa seleccionada: ID 20
+[2025-07-03 22:28:23] 🏢 Empresa seleccionada: ID 1
+[2025-07-03 22:28:23] 🏢 Empresa seleccionada: ID 22
+[2025-07-03 22:28:24] 🏢 Empresa seleccionada: ID 8
+[2025-07-03 22:28:24] 🏢 Empresa seleccionada: ID 2
+[2025-07-03 22:28:25] 🏢 Empresa seleccionada: ID 3
+[2025-07-03 22:28:25] 🏢 Empresa seleccionada: ID 2
+[2025-07-03 22:28:26] 📍 Sede seleccionada: ID 124
+[2025-07-03 22:28:31] 📍 Sede seleccionada: ID 3
+[2025-07-03 22:28:37] 📸 Intentando iniciar captura de huella
+[2025-07-03 22:28:49] ✅ Huella capturada correctamente
+[2025-07-03 22:28:51] 📥 [ORTIZ] Botón Registrar presionado
+[2025-07-03 22:28:51] 🆕 [ORTIZ] Nuevo empleado registrado: DIEGO PRUEBA (1076745514)
+[2025-07-03 22:28:52] 🕒 [ORTIZ] Horario genérico asignado para empleado ID 1584
+[2025-07-03 22:28:55] 🧹 Formulario de empleado limpiado
+[2025-07-03 22:28:56] 📡 Iniciando módulo de verificación de huella.
+[2025-07-03 22:28:58] 🧠 Procesando muestra de huella digital...
+[2025-07-03 22:28:59] ✅ Huella verificada: DIEGO PRUEBA (1076745514)
+[2025-07-03 22:28:59] 📝 Salida registrada para DIEGO (1076745514)
+[2025-07-03 22:29:06] 🧠 Procesando muestra de huella digital...
+[2025-07-03 22:29:07] ✅ Huella verificada: DIEGO PRUEBA (1076745514)
+[2025-07-03 22:29:07] ⚠ DIEGO ya marcó hace 0 min 8 seg.
+⏳ Debe esperar 5 minutos.
+[2025-07-03 22:29:31] 🧠 Procesando muestra de huella digital...
+[2025-07-03 22:29:32] ✅ Huella verificada: DIEGO ARMANDO ORTIZ MORA (80550594)
+[2025-07-03 22:29:32] 📝 Salida registrada para DIEGO ARMANDO (80550594)
+[2025-07-03 22:29:37] 🧠 Procesando muestra de huella digital...
+[2025-07-03 22:29:38] ❌ Error verificando huella: 0xFFFFFFF8
+[2025-07-03 22:29:50] 🧠 Procesando muestra de huella digital...
+[2025-07-03 22:29:51] ❌ Error verificando huella: 0xFFFFFFF8
+[2025-07-03 22:29:55] 🧠 Procesando muestra de huella digital...
+[2025-07-03 22:29:56] ✅ Huella verificada: DIEGO ARMANDO ORTIZ MORA (80550594)
+[2025-07-03 22:29:56] ⚠ DIEGO ARMANDO ya marcó hace 0 min 24 seg.
+⏳ Debe esperar 5 minutos.
