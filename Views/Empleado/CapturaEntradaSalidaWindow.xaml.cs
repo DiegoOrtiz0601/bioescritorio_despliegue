@@ -19,6 +19,7 @@ namespace BiomentricoHolding.Views.Empleado
     {
         private DispatcherTimer _timer;
         private readonly CapturaHuellaService _capturaService = new();
+        private bool _procesandoVerificacion = false;
 
         public CapturaEntradaSalidaWindow()
         {
@@ -47,6 +48,7 @@ namespace BiomentricoHolding.Views.Empleado
             _capturaService.Mensaje += MostrarMensaje;
             _capturaService.MuestraProcesada += ProcesarHuellaVerificacion;
             _capturaService.MuestraProcesadaImagen += MostrarImagenHuella;
+            _capturaService.CalidadMuestraEvaluada += OnCalidadMuestraEvaluada;
             
             // VERIFICACIÓN PREVENTIVA ANTES DE INICIAR
             if (_capturaService.VerificarLector())
@@ -58,6 +60,31 @@ namespace BiomentricoHolding.Views.Empleado
                 Logger.Agregar($"❌ No se pudo iniciar captura. Estado del lector: {_capturaService.EstadoLector}");
                 MostrarMensaje("❌ Lector no disponible. Verifique la conexión.");
             }
+        }
+
+        private void OnCalidadMuestraEvaluada(CalidadMuestra calidad)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                switch (calidad)
+                {
+                    case CalidadMuestra.Excelente:
+                        MostrarMensaje("👌 Calidad de huella excelente");
+                        break;
+                    case CalidadMuestra.Buena:
+                        MostrarMensaje("👍 Calidad de huella buena");
+                        break;
+                    case CalidadMuestra.Aceptable:
+                        MostrarMensaje("✅ Calidad de huella aceptable");
+                        break;
+                    case CalidadMuestra.Insuficiente:
+                        MostrarMensaje("⚠ Calidad de huella insuficiente");
+                        break;
+                    case CalidadMuestra.Invalida:
+                        MostrarMensaje("❌ Calidad de huella inválida");
+                        break;
+                }
+            });
         }
 
         private async void BtnReiniciar_Click(object sender, RoutedEventArgs e)
@@ -101,8 +128,104 @@ namespace BiomentricoHolding.Views.Empleado
             return bitmapImage;
         }
 
+        /// <summary>
+        /// Valida la configuración del sistema antes de procesar
+        /// </summary>
+        private bool ValidarConfiguracionSistema()
+        {
+            try
+            {
+                // Verificar que el sistema esté configurado
+                if (!ConfiguracionSistema.EstaConfigurado)
+                {
+                    Logger.Agregar("❌ Sistema no configurado: Empresa y sede no están configuradas");
+                    return false;
+                }
+
+                // Verificar que haya empleados en la base de datos
+                using var db = AppSettings.GetContextUno();
+                var empleadosActivos = db.Empleados.Where(e => e.Estado == true).Count();
+                
+                if (empleadosActivos == 0)
+                {
+                    Logger.Agregar("❌ No hay empleados activos en la base de datos");
+                    return false;
+                }
+
+                var empleadosConHuella = db.Empleados.Where(e => e.Huella != null && e.Estado == true).Count();
+                
+                if (empleadosConHuella == 0)
+                {
+                    Logger.Agregar("❌ No hay empleados con huellas registradas");
+                    return false;
+                }
+
+                Logger.Agregar($"✅ Configuración válida: {empleadosConHuella} empleados con huellas");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Agregar($"❌ Error validando configuración: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Valida datos de un empleado antes de procesar marcación
+        /// </summary>
+        private bool ValidarDatosEmpleado(EmpleadoModel empleado)
+        {
+            try
+            {
+                if (empleado == null)
+                {
+                    Logger.Agregar("❌ Empleado es nulo");
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(empleado.Nombres) || string.IsNullOrEmpty(empleado.Apellidos))
+                {
+                    Logger.Agregar($"❌ Empleado {empleado.IdEmpleado} tiene nombres/apellidos vacíos");
+                    return false;
+                }
+
+                if (empleado.Documento <= 0)
+                {
+                    Logger.Agregar($"❌ Empleado {empleado.Nombres} {empleado.Apellidos} no tiene documento válido");
+                    return false;
+                }
+
+                if (!empleado.Estado)
+                {
+                    Logger.Agregar($"❌ Empleado {empleado.Nombres} {empleado.Apellidos} no está activo");
+                    return false;
+                }
+
+                if (empleado.Huella == null || empleado.Huella.Length == 0)
+                {
+                    Logger.Agregar($"❌ Empleado {empleado.Nombres} {empleado.Apellidos} no tiene huella registrada");
+                    return false;
+                }
+
+                Logger.Agregar($"✅ Empleado {empleado.Nombres} {empleado.Apellidos} validado correctamente");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Agregar($"❌ Error validando empleado: {ex.Message}");
+                return false;
+            }
+        }
+
         private void ProcesarHuellaVerificacion(Sample sample)
         {
+            // PREVENIR PROCESAMIENTO MÚLTIPLE
+            if (_procesandoVerificacion)
+            {
+                Logger.Agregar("⚠ Verificación ya en proceso, ignorando nueva muestra");
+                return;
+            }
+
             // VERIFICACIÓN PREVENTIVA ANTES DE PROCESAR
             if (!_capturaService.VerificarLector())
             {
@@ -111,108 +234,137 @@ namespace BiomentricoHolding.Views.Empleado
                 return;
             }
 
+            // VALIDACIÓN DE CONFIGURACIÓN DEL SISTEMA
+            if (!ValidarConfiguracionSistema())
+            {
+                MostrarMensaje("❌ Sistema no configurado correctamente.");
+                ReproducirSonido("Sonidos/error.wav");
+                return;
+            }
+
+            _procesandoVerificacion = true;
             _capturaService.DetenerCaptura();
 
             MensajeWindow buscandoWindow = null;
 
             Dispatcher.Invoke(async () =>
             {
-                Logger.Agregar("🧠 Procesando muestra de huella digital...");
-
-                var extractor = new DPFP.Processing.FeatureExtraction();
-                var feedback = DPFP.Capture.CaptureFeedback.None;
-                FeatureSet features = new FeatureSet();
-                extractor.CreateFeatureSet(sample, DPFP.Processing.DataPurpose.Verification, ref feedback, ref features);
-
-                if (features == null || feedback != DPFP.Capture.CaptureFeedback.Good)
+                try
                 {
-                    Logger.Agregar("❌ No se pudo leer la huella correctamente.");
-                    MostrarMensaje("❌ No se pudo leer la huella correctamente.");
-                    ReproducirSonido("Sonidos/error.wav");
+                    Logger.Agregar("🧠 Procesando muestra de huella digital...");
 
-                    new MensajeWindow("❌ Lectura de huella inválida. Intente nuevamente.", 2, "error")
+                    var extractor = new DPFP.Processing.FeatureExtraction();
+                    var feedback = DPFP.Capture.CaptureFeedback.None;
+                    FeatureSet features = new FeatureSet();
+                    extractor.CreateFeatureSet(sample, DPFP.Processing.DataPurpose.Verification, ref feedback, ref features);
+
+                    if (features == null || feedback != DPFP.Capture.CaptureFeedback.Good)
                     {
-                        Owner = this,
-                        WindowStartupLocation = WindowStartupLocation.CenterOwner
-                    }.ShowDialog();
-                    await ReiniciarCaptura();
-                    return;
-                }
+                        Logger.Agregar("❌ No se pudo leer la huella correctamente.");
+                        MostrarMensaje("❌ No se pudo leer la huella correctamente.");
+                        ReproducirSonido("Sonidos/error.wav");
 
-                buscandoWindow = new MensajeWindow("🔍 Buscando huella...", false, true);
-                buscandoWindow.Show();
-
-                using var db = AppSettings.GetContextUno();
-                var empleados = db.Empleados.Where(e => e.Huella != null && e.Estado == true).ToList();
-                var verificador = new DPFP.Verification.Verification();
-                var resultado = new DPFP.Verification.Verification.Result();
-
-                foreach (var empleado in empleados)
-                {
-                    try
-                    {
-                        // VERIFICACIÓN PREVENTIVA DEL TEMPLATE
-                        if (empleado.Huella == null || empleado.Huella.Length == 0)
+                        new MensajeWindow("❌ Lectura de huella inválida. Intente nuevamente.", 2, "error")
                         {
-                            Logger.Agregar($"⚠️ Empleado {empleado.Nombres} tiene template vacío, saltando...");
+                            Owner = this,
+                            WindowStartupLocation = WindowStartupLocation.CenterOwner
+                        }.ShowDialog();
+                        await ReiniciarCaptura();
+                        return;
+                    }
+
+                    buscandoWindow = new MensajeWindow("🔍 Buscando huella...", false, true);
+                    buscandoWindow.Show();
+
+                    using var db = AppSettings.GetContextUno();
+                    var empleados = db.Empleados.Where(e => e.Huella != null && e.Estado == true).ToList();
+                    var verificador = new DPFP.Verification.Verification();
+                    var resultado = new DPFP.Verification.Verification.Result();
+
+                    foreach (var empleado in empleados)
+                    {
+                        try
+                        {
+                            // VALIDACIÓN DE DATOS DEL EMPLEADO
+                            if (!ValidarDatosEmpleado(empleado))
+                            {
+                                continue; // Saltar empleado inválido
+                            }
+
+                            // VERIFICACIÓN PREVENTIVA DEL TEMPLATE
+                            if (empleado.Huella == null || empleado.Huella.Length == 0)
+                            {
+                                Logger.Agregar($"⚠️ Empleado {empleado.Nombres} tiene template vacío, saltando...");
+                                continue;
+                            }
+
+                            var templateBD = new Template(new MemoryStream(empleado.Huella));
+                            verificador.Verify(features, templateBD, ref resultado);
+
+                            if (resultado.Verified)
+                            {
+                                Logger.Agregar($"✅ Huella verificada: {empleado.Nombres} {empleado.Apellidos} ({empleado.Documento})");
+                                buscandoWindow?.Close();
+                                MostrarDatosEmpleado(empleado);
+                                ReproducirSonido("Sonidos/correcto.wav");
+                                Dispatcher.InvokeAsync(() => DeterminarTipoMarcacion(empleado));
+                                return;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Agregar($"❌ Error verificando huella de {empleado.Nombres}: {ex.Message}");
+                            
+                            // Si es un error específico del SDK, intentar recuperar
+                            if (ex.Message.Contains("0xFFFFFFF8") || ex.Message.Contains("0xFFFFFFFE"))
+                            {
+                                Logger.Agregar("🚨 Error crítico del SDK detectado. Intentando recuperar lector...");
+                                
+                                if (_capturaService.IntentarRecuperarLector())
+                                {
+                                    Logger.Agregar("✅ Lector recuperado. Continuando verificación...");
+                                    continue; // Continuar con el siguiente empleado
+                                }
+                                else
+                                {
+                                    Logger.Agregar("❌ No se pudo recuperar el lector. Deteniendo verificación.");
+                                    break; // Salir del bucle
+                                }
+                            }
+                            
+                            // Para otros errores, continuar con el siguiente empleado
                             continue;
                         }
-
-                        var templateBD = new Template(new MemoryStream(empleado.Huella));
-                        verificador.Verify(features, templateBD, ref resultado);
-
-                        if (resultado.Verified)
-                        {
-                            Logger.Agregar($"✅ Huella verificada: {empleado.Nombres} {empleado.Apellidos} ({empleado.Documento})");
-                            buscandoWindow?.Close();
-                            MostrarDatosEmpleado(empleado);
-                            ReproducirSonido("Sonidos/correcto.wav");
-                            Dispatcher.InvokeAsync(() => DeterminarTipoMarcacion(empleado));
-                            return;
-                        }
                     }
-                    catch (Exception ex)
+
+                    Logger.Agregar("❌ Huella no coincide con ningún empleado registrado.");
+                    buscandoWindow?.Close();
+
+                    Dispatcher.BeginInvoke(async () =>
                     {
-                        Logger.Agregar($"❌ Error verificando huella de {empleado.Nombres}: {ex.Message}");
-                        
-                        // Si es un error específico del SDK, intentar recuperar
-                        if (ex.Message.Contains("0xFFFFFFF8") || ex.Message.Contains("0xFFFFFFFE"))
+                        MostrarMensaje("❌ Huella no coincide con ningún empleado.");
+                        ReproducirSonido("Sonidos/error.wav");
+                        new MensajeWindow(
+                            "❌ Huella no reconocida.\nPor favor coloque su dedo nuevamente en el lector.", 2, "advertencia")
                         {
-                            Logger.Agregar("🚨 Error crítico del SDK detectado. Intentando recuperar lector...");
-                            
-                            if (_capturaService.IntentarRecuperarLector())
-                            {
-                                Logger.Agregar("✅ Lector recuperado. Continuando verificación...");
-                                continue; // Continuar con el siguiente empleado
-                            }
-                            else
-                            {
-                                Logger.Agregar("❌ No se pudo recuperar el lector. Deteniendo verificación.");
-                                break; // Salir del bucle
-                            }
-                        }
-                        
-                        // Para otros errores, continuar con el siguiente empleado
-                        continue;
-                    }
+                            Owner = this,
+                            WindowStartupLocation = WindowStartupLocation.CenterOwner
+                        }.ShowDialog();
+
+                        await ReiniciarCaptura();
+                    });
                 }
-
-                Logger.Agregar("❌ Huella no coincide con ningún empleado registrado.");
-                buscandoWindow?.Close();
-
-                Dispatcher.BeginInvoke(async () =>
+                catch (Exception ex)
                 {
-                    MostrarMensaje("❌ Huella no coincide con ningún empleado.");
-                    ReproducirSonido("Sonidos/error.wav");
-                    new MensajeWindow(
-                        "❌ Huella no reconocida.\nPor favor coloque su dedo nuevamente en el lector.", 2, "advertencia")
-                    {
-                        Owner = this,
-                        WindowStartupLocation = WindowStartupLocation.CenterOwner
-                    }.ShowDialog();
-
+                    Logger.Agregar($"❌ Error general en verificación: {ex.Message}");
+                    buscandoWindow?.Close();
+                    MostrarMensaje("❌ Error en verificación. Reintentando...");
                     await ReiniciarCaptura();
-                });
+                }
+                finally
+                {
+                    _procesandoVerificacion = false;
+                }
             });
         }
 
@@ -230,6 +382,14 @@ namespace BiomentricoHolding.Views.Empleado
             {
                 try
                 {
+                    // VALIDACIÓN FINAL DE DATOS ANTES DE MARCAR
+                    if (!ValidarDatosEmpleado(empleado))
+                    {
+                        MostrarMensaje("❌ Datos de empleado inválidos.");
+                        await ReiniciarCaptura();
+                        return;
+                    }
+
                     using var db = AppSettings.GetContextUno();
 
                     var hoy = DateTime.Now;
@@ -250,7 +410,6 @@ namespace BiomentricoHolding.Views.Empleado
                         }.ShowDialog();
                         await ReiniciarCaptura();
                         return;
-
                     }
 
                     var detalle = db.DetalleHorarios
@@ -273,7 +432,6 @@ namespace BiomentricoHolding.Views.Empleado
                         return;
                     }
 
-
                     TimeOnly horaActual = TimeOnly.FromDateTime(hoy);
                     TimeOnly entrada = detalle.HoraInicio;
                     TimeOnly salida = detalle.HoraFin;
@@ -284,6 +442,7 @@ namespace BiomentricoHolding.Views.Empleado
 
                     int tipoMarcacion;
                     string tipoTexto;
+                    
                     // Si está dentro del rango de salida o después de la salida → Salida
                     if (horaActual >= salida.AddHours(-1))
                     {
@@ -301,8 +460,6 @@ namespace BiomentricoHolding.Views.Empleado
                         tipoTexto = "Novedad";
                         Logger.Agregar($"⚠️ {empleado.Nombres} realizó una marcación fuera de horario. Se registrará como NOVEDAD.");
                     }
-
-
 
                     var cincoMinutosAtras = hoy.AddMinutes(-5);
 
@@ -327,7 +484,6 @@ namespace BiomentricoHolding.Views.Empleado
                         await ReiniciarCaptura();
                         return;
                     }
-
 
                     if (!ConfiguracionSistema.EstaConfigurado)
                     {
@@ -359,7 +515,6 @@ namespace BiomentricoHolding.Views.Empleado
                         await ReiniciarCaptura();
                     };
                     ventanaConfirmacion.Show();
-
                 }
                 catch (Exception ex)
                 {
