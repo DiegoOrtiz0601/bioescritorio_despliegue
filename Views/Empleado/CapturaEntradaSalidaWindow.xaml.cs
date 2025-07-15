@@ -47,7 +47,17 @@ namespace BiomentricoHolding.Views.Empleado
             _capturaService.Mensaje += MostrarMensaje;
             _capturaService.MuestraProcesada += ProcesarHuellaVerificacion;
             _capturaService.MuestraProcesadaImagen += MostrarImagenHuella;
-            _capturaService.IniciarCaptura();
+            
+            // VERIFICACIÓN PREVENTIVA ANTES DE INICIAR
+            if (_capturaService.VerificarLector())
+            {
+                _capturaService.IniciarCaptura();
+            }
+            else
+            {
+                Logger.Agregar($"❌ No se pudo iniciar captura. Estado del lector: {_capturaService.EstadoLector}");
+                MostrarMensaje("❌ Lector no disponible. Verifique la conexión.");
+            }
         }
 
         private async void BtnReiniciar_Click(object sender, RoutedEventArgs e)
@@ -93,6 +103,14 @@ namespace BiomentricoHolding.Views.Empleado
 
         private void ProcesarHuellaVerificacion(Sample sample)
         {
+            // VERIFICACIÓN PREVENTIVA ANTES DE PROCESAR
+            if (!_capturaService.VerificarLector())
+            {
+                Logger.Agregar($"❌ Lector no disponible para procesar muestra. Estado: {_capturaService.EstadoLector}");
+                MostrarMensaje("❌ Lector no disponible. Verifique la conexión.");
+                return;
+            }
+
             _capturaService.DetenerCaptura();
 
             MensajeWindow buscandoWindow = null;
@@ -133,6 +151,13 @@ namespace BiomentricoHolding.Views.Empleado
                 {
                     try
                     {
+                        // VERIFICACIÓN PREVENTIVA DEL TEMPLATE
+                        if (empleado.Huella == null || empleado.Huella.Length == 0)
+                        {
+                            Logger.Agregar($"⚠️ Empleado {empleado.Nombres} tiene template vacío, saltando...");
+                            continue;
+                        }
+
                         var templateBD = new Template(new MemoryStream(empleado.Huella));
                         verificador.Verify(features, templateBD, ref resultado);
 
@@ -148,25 +173,28 @@ namespace BiomentricoHolding.Views.Empleado
                     }
                     catch (Exception ex)
                     {
-                        Logger.Agregar($"❌ Error verificando huella: {ex.Message}");
-                        buscandoWindow?.Close();
-                        // 🔊 Reproducir sonido ANTES de limpiar o reiniciar
-                        ReproducirSonido("Sonidos/error.wav");
-
-                        new MensajeWindow("❌ Error al verificar la huella. Intente nuevamente.", 2, "error")
-                        {
-                            Owner = this,
-                            WindowStartupLocation = WindowStartupLocation.CenterOwner
-                        }.ShowDialog();
-
-                        MostrarMensaje("❌ Error verificando huella.");
-
+                        Logger.Agregar($"❌ Error verificando huella de {empleado.Nombres}: {ex.Message}");
                         
-
-                        await ReiniciarCaptura(); // Dentro de este método está LimpiarFormulario()
-                        return;
+                        // Si es un error específico del SDK, intentar recuperar
+                        if (ex.Message.Contains("0xFFFFFFF8") || ex.Message.Contains("0xFFFFFFFE"))
+                        {
+                            Logger.Agregar("🚨 Error crítico del SDK detectado. Intentando recuperar lector...");
+                            
+                            if (_capturaService.IntentarRecuperarLector())
+                            {
+                                Logger.Agregar("✅ Lector recuperado. Continuando verificación...");
+                                continue; // Continuar con el siguiente empleado
+                            }
+                            else
+                            {
+                                Logger.Agregar("❌ No se pudo recuperar el lector. Deteniendo verificación.");
+                                break; // Salir del bucle
+                            }
+                        }
+                        
+                        // Para otros errores, continuar con el siguiente empleado
+                        continue;
                     }
-
                 }
 
                 Logger.Agregar("❌ Huella no coincide con ningún empleado registrado.");
@@ -276,7 +304,6 @@ namespace BiomentricoHolding.Views.Empleado
 
 
 
-
                     var cincoMinutosAtras = hoy.AddMinutes(-5);
 
                     var ultima = db.Marcaciones
@@ -342,20 +369,41 @@ namespace BiomentricoHolding.Views.Empleado
                 }
                 finally
                 {
-                    _capturaService.IniciarCaptura();
+                    // VERIFICACIÓN PREVENTIVA ANTES DE REINICIAR
+                    if (_capturaService.VerificarLector())
+                    {
+                        _capturaService.IniciarCaptura();
+                    }
+                    else
+                    {
+                        Logger.Agregar("❌ No se pudo reiniciar captura. Lector no disponible.");
+                        MostrarMensaje("❌ Lector no disponible. Verifique la conexión.");
+                    }
                 }
             });
         }
+        
         private async Task ReiniciarCaptura()
         {
             LimpiarFormulario();
             await Task.Delay(500);
-            _capturaService.IniciarCaptura();
+            
+            // VERIFICACIÓN PREVENTIVA ANTES DE REINICIAR
+            if (_capturaService.VerificarLector())
+            {
+                _capturaService.IniciarCaptura();
+            }
+            else
+            {
+                Logger.Agregar("❌ No se pudo reiniciar captura. Lector no disponible.");
+                MostrarMensaje("❌ Lector no disponible. Verifique la conexión.");
+            }
         }
 
         protected override void OnClosed(EventArgs e)
         {
             _capturaService.DetenerCaptura();
+            _capturaService.Dispose(); // Liberar recursos correctamente
             base.OnClosed(e);
         }
 
