@@ -39,31 +39,6 @@ namespace BiomentricoHolding.Views
             }
         }
 
-        // Constructor para confirmación con icono de advertencia
-        public MensajeWindow(string mensaje, bool mostrarCancelar, string textoAceptar, string textoCancelar, string tipoIcono)
-            : this(mensaje, mostrarCancelar, textoAceptar, textoCancelar)
-        {
-            switch (tipoIcono.ToLower())
-            {
-                case "advertencia":
-                    icono.Text = "⚠️";
-                    icono.Foreground = System.Windows.Media.Brushes.DarkOrange;
-                    break;
-                case "error":
-                    icono.Text = "❌";
-                    icono.Foreground = System.Windows.Media.Brushes.Red;
-                    break;
-                case "info":
-                    icono.Text = "ℹ️";
-                    icono.Foreground = System.Windows.Media.Brushes.Blue;
-                    break;
-                default:
-                    icono.Text = "🔔";
-                    icono.Foreground = System.Windows.Media.Brushes.SteelBlue;
-                    break;
-            }
-        }
-
         // Autocierre
         public MensajeWindow(string mensaje, int segundosAutocierre)
             : this(mensaje, false)

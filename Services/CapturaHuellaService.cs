@@ -327,7 +327,7 @@ namespace BiomentricoHolding.Services
                 primerIntento = true;
 
                 Capturador?.StartCapture();
-                Mensaje?.Invoke("👆 Coloque su dedo en el lector para verificar identidad");
+                Mensaje?.Invoke("Coloca tu dedo en el lector para capturar la huella.");
             }
             catch (Exception ex)
             {
@@ -342,7 +342,7 @@ namespace BiomentricoHolding.Services
             try
             {
                 Capturador?.StopCapture();
-                Mensaje?.Invoke("⏸️ Sistema de verificación pausado");
+                Mensaje?.Invoke("📴 Captura detenida.");
             }
             catch (Exception ex)
             {
@@ -407,39 +407,19 @@ namespace BiomentricoHolding.Services
                     }
                     else if (Enroller.TemplateStatus == Enrollment.Status.Failed)
                     {
-                        ManejarFallo("❌ Las huellas capturadas no coinciden entre sí.\n\n💡 Recomendaciones:\n• Asegúrese de colocar el mismo dedo en todas las capturas\n• Limpie el dedo y el lector antes de intentar\n• Mantenga el dedo firme y centrado en el lector\n• Intente con otro dedo si el problema persiste");
+                        ManejarFallo("❌ Las muestras no coincidieron. Debes volver a intentarlo.");
                     }
                 }
                 catch (DPFP.Error.SDKException ex)
                 {
                     estadoLector = EstadoLector.Error;
                     intentosFallidos++;
-                    
-                    // Mensajes más informativos según el tipo de error
-                    string mensajeError;
-                    if (ex.Message.Contains("Enrollment procedure failed"))
-                    {
-                        mensajeError = "❌ Las huellas capturadas no coinciden entre sí.\n\n💡 Recomendaciones:\n• Asegúrese de colocar el mismo dedo en todas las capturas\n• Limpie el dedo y el lector antes de intentar\n• Mantenga el dedo firme y centrado en el lector\n• Intente con otro dedo si el problema persiste";
-                    }
-                    else if (ex.Message.Contains("0xFFFFFFF8") || ex.Message.Contains("0xFFFFFFFE"))
-                    {
-                        mensajeError = "❌ Error del lector biométrico.\n\n💡 Soluciones:\n• Desconecte y reconecte el lector\n• Reinicie la aplicación\n• Verifique que no haya otras aplicaciones usando el lector\n• Contacte al administrador si el problema persiste";
-                    }
-                    else if (ex.Message.Contains("Template"))
-                    {
-                        mensajeError = "❌ Error al procesar la huella digital.\n\n💡 Intente:\n• Limpiar el dedo y el lector\n• Colocar el dedo de manera más firme\n• Usar otro dedo\n• Reiniciar el proceso de captura";
-                    }
-                    else
-                    {
-                        mensajeError = $"❌ Error técnico en la captura de huella.\n\nDetalles: {ex.Message}\n\n💡 Intente reiniciar el proceso de captura.";
-                    }
-                    
-                    ManejarFallo(mensajeError);
+                    ManejarFallo($"❌ Error crítico al capturar huella:\n{ex.Message}");
                 }
             }
             else
             {
-                ManejarFallo("⚠ La huella capturada no es clara o válida.\n\n💡 Intente:\n• Limpiar el dedo con un paño seco\n• Limpiar la superficie del lector\n• Colocar el dedo de manera más firme y centrada\n• Asegurarse de que el dedo esté completamente apoyado\n• Evitar movimientos durante la captura");
+                ManejarFallo("⚠ Huella no clara. Intenta nuevamente.");
             }
         }
 
@@ -475,13 +455,13 @@ namespace BiomentricoHolding.Services
         public void OnFingerTouch(object capture, string readerSerialNumber)
         {
             if (primerIntento)
-                Mensaje?.Invoke("👆 Dedo detectado - Procesando huella...");
+                Mensaje?.Invoke("👆 Dedo detectado...");
         }
 
         public void OnFingerGone(object capture, string readerSerialNumber)
         {
             if (primerIntento)
-                Mensaje?.Invoke("👋 Dedo retirado - Espere instrucciones");
+                Mensaje?.Invoke("👋 Dedo retirado.");
         }
 
         public void OnReaderConnect(object capture, string readerSerialNumber)
@@ -489,14 +469,14 @@ namespace BiomentricoHolding.Services
             lectorConectado = true;
             estadoLector = EstadoLector.Conectado;
             intentosFallidos = 0; // Resetear contador al reconectar
-            Mensaje?.Invoke("🔗 Lector biométrico conectado y listo");
+            Mensaje?.Invoke("✅ Lector conectado.");
         }
 
         public void OnReaderDisconnect(object capture, string readerSerialNumber)
         {
             lectorConectado = false;
             estadoLector = EstadoLector.Desconectado;
-            Mensaje?.Invoke("🔌 Lector biométrico desconectado");
+            Mensaje?.Invoke("❌ Lector desconectado.");
         }
 
         public void OnSampleQuality(object capture, string readerSerialNumber, CaptureFeedback feedback)
@@ -508,9 +488,9 @@ namespace BiomentricoHolding.Services
             CalidadMuestraEvaluada?.Invoke(calidad);
 
             if (feedback == CaptureFeedback.Good)
-                Mensaje?.Invoke("✅ Calidad de huella excelente - Continuando verificación");
+                Mensaje?.Invoke("👌 Calidad de huella aceptable.");
             else
-                Mensaje?.Invoke("⚠️ Ajuste la posición del dedo para mejorar la calidad");
+                Mensaje?.Invoke("⚠ Calidad de huella insuficiente.");
         }
 
         public void Reiniciar(ModoCaptura nuevoModo)

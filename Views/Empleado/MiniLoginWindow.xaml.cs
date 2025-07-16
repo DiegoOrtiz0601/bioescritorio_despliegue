@@ -71,9 +71,14 @@ namespace BiomentricoHolding.Views.Empleado
 
         private void BtnCerrar_Click(object sender, RoutedEventArgs e)
         {
-            var decision = new MensajeWindow("¿Deseas cerrar esta ventana?", true, "Cerrar", "Cancelar", "advertencia");
+            var confirmar = new MensajeWindow("⚠ ¿Deseas cerrar esta ventana?", 0, "advertencia")
+            {
+                Owner = this
+            };
+
+            // Agregar botones personalizados manualmente
+            var decision = new MensajeWindow("⚠ ¿Deseas cerrar esta ventana?", true, "Cerrar", "Cancelar");
             decision.Owner = this;
-            
             bool? resultado = decision.ShowDialog();
 
             if (resultado == true && decision.Resultado)
