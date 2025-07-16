@@ -1,6 +1,7 @@
 ﻿using BiomentricoHolding.Data.DataBaseRegistro_Test;
 using BiomentricoHolding.Services;
 using BiomentricoHolding.Utils;
+using DPFP;
 using System.Drawing;
 using System.IO;
 using System.Windows;
@@ -399,7 +400,7 @@ namespace BiomentricoHolding.Views.Empleado
 
         private void BtnCapturarHuella_Click(object sender, RoutedEventArgs e)
         {
-            Logger.Agregar("📸 Intentando iniciar captura de huella");
+            Logger.Agregar("📸 Iniciando captura de huella para registro de empleado");
             try
             {
                 new CapturaHuellaService().DetenerCaptura();
@@ -421,8 +422,9 @@ namespace BiomentricoHolding.Views.Empleado
                     imgHuella.Source = imagenHuella;
                     imgHuella.Visibility = Visibility.Visible;
                     imgHuellaBorder.Visibility = Visibility.Visible;
+                    
                     Logger.Agregar("✅ Huella capturada correctamente");
-                    new MensajeWindow("✅ Huella capturada correctamente.", false, "Aceptar", "").ShowDialog();
+                    new MensajeWindow("✅ Huella capturada exitosamente", false, "Perfecto", "").ShowDialog();
                 }
             }
             else
@@ -431,6 +433,8 @@ namespace BiomentricoHolding.Views.Empleado
                 new MensajeWindow("❌ La captura fue cancelada.", false, "Cerrar", "").ShowDialog();
             }
         }
+
+
 
         private void LimpiarFormulario()
         {

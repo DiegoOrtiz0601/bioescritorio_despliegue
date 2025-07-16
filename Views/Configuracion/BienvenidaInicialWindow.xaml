@@ -9,18 +9,23 @@
         Background="#FFF2F2F2"
         AllowsTransparency="True">
 
-    <Border CornerRadius="10" Background="White" Padding="20" BorderBrush="#ccc" BorderThickness="1">
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-            <TextBlock Text="👋 Bienvenido al Sistema Biométrico"
-                       FontSize="20" FontWeight="Bold" TextAlignment="Center" Margin="0,0,0,10"/>
-            <TextBlock Text="Antes de comenzar, debe configurar el sistema seleccionando una sede y empresa."
-                       FontSize="14" TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,20"/>
+    <Border CornerRadius="16" Background="White" Padding="30" BorderBrush="#E5E7EB" BorderThickness="1" Effect="{StaticResource VMLDropShadow}">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="🛡️"
+                       FontSize="48"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,20"/>
+            <TextBlock Text="Bienvenido al Sistema Biométrico"
+                       FontSize="22" FontWeight="Bold" TextAlignment="Center" Margin="0,0,0,8"/>
+            <TextBlock Text="VML Technologies"
+                       FontSize="16" FontWeight="SemiBold" TextAlignment="Center" Foreground="#6B7280" Margin="0,0,0,20"/>
+            <TextBlock Text="Antes de comenzar, debe configurar el sistema seleccionando una empresa y sede para establecer el punto de control."
+                       FontSize="15" TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,30" Foreground="#374151"/>
 
-            <Button Content="Iniciar configuración"
-                    Width="200" Height="40"
-                    Background="#dc3545" Foreground="White"
-                    FontWeight="Bold" Click="BtnIniciarConfiguracion_Click"
-                    Cursor="Hand"/>
+            <Button Content="🚀 Iniciar Configuración"
+                    Width="220" Height="45"
+                    Style="{StaticResource VMLButtonPrimary}"
+                    Click="BtnIniciarConfiguracion_Click"/>
         </StackPanel>
     </Border>
 </Window>

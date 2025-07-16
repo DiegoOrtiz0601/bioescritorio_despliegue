@@ -3,6 +3,7 @@ using DPFP;
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -44,12 +45,16 @@ namespace BiomentricoHolding.Views.Empleado
             {
                 txtEstado.Text = mensaje;
 
-                // Solo mostrar mensaje en fallos graves o advertencias, no en éxito de cada intento
-                if (mensaje.Contains("Error: las muestras no coincidieron"))
+                // Mostrar ventana de mensaje para errores importantes
+                if (mensaje.StartsWith("❌"))
                 {
                     new MensajeWindow(mensaje, false, "Entendido", "").ShowDialog();
                 }
-                else if (mensaje.StartsWith("❌"))
+                else if (mensaje.Contains("no coinciden") || mensaje.Contains("no es clara"))
+                {
+                    new MensajeWindow(mensaje, false, "Reintentar", "").ShowDialog();
+                }
+                else if (mensaje.Contains("Error del lector") || mensaje.Contains("Error técnico"))
                 {
                     new MensajeWindow(mensaje, false, "Cerrar", "").ShowDialog();
                 }
@@ -70,9 +75,15 @@ namespace BiomentricoHolding.Views.Empleado
 
             Dispatcher.Invoke(() =>
             {
-                MostrarAlerta("✅ Huella capturada correctamente.");
-                this.DialogResult = true;
-                this.Close(); // Cerramos la ventana
+                // No cerrar automáticamente, solo mostrar confirmación
+                txtEstado.Text = "✅ Huella capturada correctamente. Presiona 'Confirmar' para continuar.";
+                
+                // Habilitar botón de confirmar
+                btnConfirmar.Visibility = Visibility.Visible;
+                btnConfirmar.IsEnabled = true;
+                
+                // Detener captura ya que tenemos el template
+                capturaService.DetenerCaptura();
             });
         }
 
@@ -116,7 +127,7 @@ namespace BiomentricoHolding.Views.Empleado
         {
             Dispatcher.Invoke(() =>
             {
-                new MensajeWindow("🛑 Las huellas no coincidieron.\n\nPor favor, intenta nuevamente.", false, "Reintentar", "").ShowDialog();
+                new MensajeWindow("🛑 Las huellas capturadas no coinciden entre sí.\n\n💡 Recomendaciones:\n• Asegúrese de colocar el mismo dedo en todas las capturas\n• Limpie el dedo y el lector antes de intentar\n• Mantenga el dedo firme y centrado en el lector\n• Intente con otro dedo si el problema persiste", false, "Reintentar", "").ShowDialog();
                 panelHuellas.Children.Clear();
                 txtEstado.Text = "Coloca tu dedo nuevamente en el lector.";
             });
@@ -125,6 +136,13 @@ namespace BiomentricoHolding.Views.Empleado
         private void BtnCerrar_Click(object sender, RoutedEventArgs e)
         {
             capturaService.DetenerCaptura(); // ✅ Liberar el lector
+            this.Close();
+        }
+
+        private void BtnConfirmar_Click(object sender, RoutedEventArgs e)
+        {
+            // Cerrar la ventana y retornar el template para verificación
+            this.DialogResult = true;
             this.Close();
         }
 

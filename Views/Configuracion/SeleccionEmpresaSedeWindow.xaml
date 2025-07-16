@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="SeleccionEmpresaSedeWindow"
-        Height="350" Width="400"
+        Height="400" Width="450"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         WindowStyle="None"
@@ -12,12 +12,12 @@
         Topmost="True">
 
     <Grid Background="Transparent">
-        <Border Width="320" Padding="20"
-                CornerRadius="12"
+        <Border Width="380" Padding="30"
+                CornerRadius="16"
                 Background="White"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Effect="{DynamicResource DropShadow}">
+                Effect="{StaticResource VMLDropShadow}">
 
             <Grid>
                 <!-- Botón cerrar -->
@@ -30,6 +30,7 @@
                         BorderThickness="0"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
+                        Margin="0,5,5,0"
                         Cursor="Hand"
                         ToolTip="Cerrar"
                         Click="BtnCerrar_Click"/>
@@ -37,60 +38,40 @@
                 <!-- Contenido -->
                 <StackPanel Margin="0,30,0,0">
 
-                    <TextBlock Text="🏢 Configuración Inicial"
+                    <TextBlock Text="⚙️ Configuración del Sistema"
                                FontWeight="Bold"
-                               FontSize="18"
-                               Foreground="#1F2937"
-                               Margin="0,0,0,20"
+                               FontSize="20"
+                               Foreground="{StaticResource VMLPrimary}"
+                               Margin="0,0,0,8"
                                HorizontalAlignment="Center"/>
+                    <TextBlock Text="Establecer punto de control"
+                               FontSize="14"
+                               Foreground="#6B7280"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,25"/>
 
                     <!-- Empresa -->
-                    <TextBlock Text="Empresa" Margin="0,0,0,4" FontWeight="SemiBold"/>
+                    <TextBlock Text="🏢 Seleccionar Empresa" Margin="0,0,0,8" FontWeight="SemiBold" Foreground="#374151"/>
                     <ComboBox x:Name="cmbEmpresas"
-                              Height="32"
-                              Padding="8,0"
-                              Margin="0,0,0,10"
-                              Background="#F3F4F6"
-                              BorderThickness="1"
-                              BorderBrush="#CBD5E1"
+                              Height="42"
+                              Padding="12,0"
+                              Margin="0,0,0,20"
+                              Style="{StaticResource VMLComboBox}"
                               SelectionChanged="cmbEmpresas_SelectionChanged"/>
 
                     <!-- Sede -->
-                    <TextBlock Text="Sede" Margin="0,0,0,4" FontWeight="SemiBold"/>
+                    <TextBlock Text="📍 Seleccionar Sede" Margin="0,0,0,8" FontWeight="SemiBold" Foreground="#374151"/>
                     <ComboBox x:Name="cmbSedes"
-                              Height="32"
-                              Padding="8,0"
-                              Margin="0,0,0,20"
-                              Background="#F3F4F6"
-                              BorderThickness="1"
-                              BorderBrush="#CBD5E1"/>
+                              Height="42"
+                              Padding="12,0"
+                              Margin="0,0,0,30"
+                              Style="{StaticResource VMLComboBox}"/>
 
                     <!-- Botón guardar -->
-                    <Button Content="💾 Guardar"
-                            Height="36"
-                            Background="#680307"
-                            Foreground="White"
-                            FontWeight="Bold"
-                            Cursor="Hand"
-                            BorderThickness="0"
-                            Click="BtnGuardar_Click">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="border"
-                                        Background="{TemplateBinding Background}"
-                                        CornerRadius="8"
-                                        Padding="{TemplateBinding Padding}">
-                                    <ContentPresenter HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="border" Property="Background" Value="#343a40"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                    <Button Content="💾 Guardar Configuración"
+                            Height="45"
+                            Style="{StaticResource VMLButtonPrimary}"
+                            Click="BtnGuardar_Click"/>
                 </StackPanel>
             </Grid>
         </Border>

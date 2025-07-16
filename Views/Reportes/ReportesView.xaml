@@ -36,7 +36,7 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
         <Grid MinWidth="900" MinHeight="500">
-            <Border BorderBrush="#CCC" BorderThickness="1" CornerRadius="10" Background="White" Margin="10">
+            <Border BorderBrush="#CCC" BorderThickness="1" CornerRadius="10" Background="White" Margin="10" Effect="{DynamicResource DropShadow}">
                 <Grid Margin="20">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

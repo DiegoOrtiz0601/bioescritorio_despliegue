@@ -69,19 +69,19 @@ namespace BiomentricoHolding.Views.Empleado
                 switch (calidad)
                 {
                     case CalidadMuestra.Excelente:
-                        MostrarMensaje("👌 Calidad de huella excelente");
+                        MostrarMensaje("🌟 Calidad de huella excelente - Procesando...");
                         break;
                     case CalidadMuestra.Buena:
-                        MostrarMensaje("👍 Calidad de huella buena");
+                        MostrarMensaje("👍 Calidad de huella buena - Continuando...");
                         break;
                     case CalidadMuestra.Aceptable:
-                        MostrarMensaje("✅ Calidad de huella aceptable");
+                        MostrarMensaje("✅ Calidad de huella aceptable - Verificando...");
                         break;
                     case CalidadMuestra.Insuficiente:
-                        MostrarMensaje("⚠ Calidad de huella insuficiente");
+                        MostrarMensaje("⚠️ Calidad insuficiente - Ajuste el dedo");
                         break;
                     case CalidadMuestra.Invalida:
-                        MostrarMensaje("❌ Calidad de huella inválida");
+                        MostrarMensaje("❌ Huella inválida - Intente nuevamente");
                         break;
                 }
             });
@@ -94,11 +94,11 @@ namespace BiomentricoHolding.Views.Empleado
 
         private void LimpiarFormulario()
         {
-            txtEstadoHuella.Text = "Por favor coloque su dedo en el lector";
-            lblNombreEmpleado.Text = "Nombre: ---";
-            lblDocumento.Text = "Documento: ---";
-            lblTipoMarcacion.Text = "Marcación: ---";
-            lblEstadoMarcacion.Text = "Estado: ---";
+            txtEstadoHuella.Text = "👆 Por favor coloque su dedo en el lector";
+            lblNombreEmpleado.Text = "👤 Nombre: ---";
+            lblDocumento.Text = "🆔 Documento: ---";
+            lblTipoMarcacion.Text = "📋 Marcación: ---";
+            lblEstadoMarcacion.Text = "📊 Estado: ---";
             imgHuella.Source = null;
         }
 
@@ -142,16 +142,8 @@ namespace BiomentricoHolding.Views.Empleado
                     return false;
                 }
 
-                // Verificar que haya empleados en la base de datos
+                // Verificar que haya empleados con huellas en la base de datos
                 using var db = AppSettings.GetContextUno();
-                var empleadosActivos = db.Empleados.Where(e => e.Estado == true).Count();
-                
-                if (empleadosActivos == 0)
-                {
-                    Logger.Agregar("❌ No hay empleados activos en la base de datos");
-                    return false;
-                }
-
                 var empleadosConHuella = db.Empleados.Where(e => e.Huella != null && e.Estado == true).Count();
                 
                 if (empleadosConHuella == 0)
@@ -160,7 +152,6 @@ namespace BiomentricoHolding.Views.Empleado
                     return false;
                 }
 
-                Logger.Agregar($"✅ Configuración válida: {empleadosConHuella} empleados con huellas");
                 return true;
             }
             catch (Exception ex)
@@ -179,40 +170,35 @@ namespace BiomentricoHolding.Views.Empleado
             {
                 if (empleado == null)
                 {
-                    Logger.Agregar("❌ Empleado es nulo");
                     return false;
                 }
 
                 if (string.IsNullOrEmpty(empleado.Nombres) || string.IsNullOrEmpty(empleado.Apellidos))
                 {
-                    Logger.Agregar($"❌ Empleado {empleado.IdEmpleado} tiene nombres/apellidos vacíos");
                     return false;
                 }
 
                 if (empleado.Documento <= 0)
                 {
-                    Logger.Agregar($"❌ Empleado {empleado.Nombres} {empleado.Apellidos} no tiene documento válido");
                     return false;
                 }
 
                 if (!empleado.Estado)
                 {
-                    Logger.Agregar($"❌ Empleado {empleado.Nombres} {empleado.Apellidos} no está activo");
                     return false;
                 }
 
                 if (empleado.Huella == null || empleado.Huella.Length == 0)
                 {
-                    Logger.Agregar($"❌ Empleado {empleado.Nombres} {empleado.Apellidos} no tiene huella registrada");
                     return false;
                 }
 
-                Logger.Agregar($"✅ Empleado {empleado.Nombres} {empleado.Apellidos} validado correctamente");
                 return true;
             }
             catch (Exception ex)
             {
-                Logger.Agregar($"❌ Error validando empleado: {ex.Message}");
+                // Solo registrar errores críticos de validación
+                System.Diagnostics.Debug.WriteLine($"Error validando empleado: {ex.Message}");
                 return false;
             }
         }
@@ -273,16 +259,25 @@ namespace BiomentricoHolding.Views.Empleado
                         return;
                     }
 
-                    buscandoWindow = new MensajeWindow("🔍 Buscando huella...", false, true);
+                    buscandoWindow = new MensajeWindow("🔍 Verificando identidad en la base de datos...", false, true);
                     buscandoWindow.Show();
 
                     using var db = AppSettings.GetContextUno();
                     var empleados = db.Empleados.Where(e => e.Huella != null && e.Estado == true).ToList();
                     var verificador = new DPFP.Verification.Verification();
                     var resultado = new DPFP.Verification.Verification.Result();
+                    
+                    int empleadosVerificados = 0;
+                    int empleadosValidos = 0;
+                    int erroresSdk = 0;
+                    EmpleadoModel empleadoEncontrado = null;
+
+                    Logger.Agregar($"🔍 Iniciando verificación de huella en {empleados.Count} empleados registrados...");
 
                     foreach (var empleado in empleados)
                     {
+                        empleadosVerificados++;
+                        
                         try
                         {
                             // VALIDACIÓN DE DATOS DEL EMPLEADO
@@ -294,30 +289,25 @@ namespace BiomentricoHolding.Views.Empleado
                             // VERIFICACIÓN PREVENTIVA DEL TEMPLATE
                             if (empleado.Huella == null || empleado.Huella.Length == 0)
                             {
-                                Logger.Agregar($"⚠️ Empleado {empleado.Nombres} tiene template vacío, saltando...");
-                                continue;
+                                continue; // Saltar empleado sin huella
                             }
 
+                            empleadosValidos++;
                             var templateBD = new Template(new MemoryStream(empleado.Huella));
                             verificador.Verify(features, templateBD, ref resultado);
 
                             if (resultado.Verified)
                             {
-                                Logger.Agregar($"✅ Huella verificada: {empleado.Nombres} {empleado.Apellidos} ({empleado.Documento})");
-                                buscandoWindow?.Close();
-                                MostrarDatosEmpleado(empleado);
-                                ReproducirSonido("Sonidos/correcto.wav");
-                                Dispatcher.InvokeAsync(() => DeterminarTipoMarcacion(empleado));
-                                return;
+                                empleadoEncontrado = empleado;
+                                break; // Salir del bucle al encontrar coincidencia
                             }
                         }
                         catch (Exception ex)
                         {
-                            Logger.Agregar($"❌ Error verificando huella de {empleado.Nombres}: {ex.Message}");
-                            
                             // Si es un error específico del SDK, intentar recuperar
                             if (ex.Message.Contains("0xFFFFFFF8") || ex.Message.Contains("0xFFFFFFFE"))
                             {
+                                erroresSdk++;
                                 Logger.Agregar("🚨 Error crítico del SDK detectado. Intentando recuperar lector...");
                                 
                                 if (_capturaService.IntentarRecuperarLector())
@@ -337,15 +327,28 @@ namespace BiomentricoHolding.Views.Empleado
                         }
                     }
 
-                    Logger.Agregar("❌ Huella no coincide con ningún empleado registrado.");
+                    // REGISTRAR RESUMEN DE LA VERIFICACIÓN
+                    if (empleadoEncontrado != null)
+                    {
+                        Logger.Agregar($"✅ Huella verificada exitosamente: {empleadoEncontrado.Nombres} {empleadoEncontrado.Apellidos} ({empleadoEncontrado.Documento}) - Verificados: {empleadosVerificados} empleados");
+                        buscandoWindow?.Close();
+                        MostrarDatosEmpleado(empleadoEncontrado);
+                        ReproducirSonido("Sonidos/correcto.wav");
+                        Dispatcher.InvokeAsync(() => DeterminarTipoMarcacion(empleadoEncontrado));
+                        return;
+                    }
+                    else
+                    {
+                        Logger.Agregar($"❌ Huella no reconocida - Verificados: {empleadosVerificados} empleados, Válidos: {empleadosValidos}, Errores SDK: {erroresSdk}");
+                    }
                     buscandoWindow?.Close();
 
                     Dispatcher.BeginInvoke(async () =>
                     {
-                        MostrarMensaje("❌ Huella no coincide con ningún empleado.");
+                        MostrarMensaje("❌ Huella no reconocida - Intente nuevamente");
                         ReproducirSonido("Sonidos/error.wav");
                         new MensajeWindow(
-                            "❌ Huella no reconocida.\nPor favor coloque su dedo nuevamente en el lector.", 2, "advertencia")
+                            "❌ Huella no reconocida en el sistema.\n\n💡 Verifique que:\n• Su huella esté registrada\n• Coloque el mismo dedo registrado\n• El dedo esté limpio y seco", 3, "advertencia")
                         {
                             Owner = this,
                             WindowStartupLocation = WindowStartupLocation.CenterOwner
@@ -370,10 +373,10 @@ namespace BiomentricoHolding.Views.Empleado
 
         private void MostrarDatosEmpleado(EmpleadoModel empleado)
         {
-            lblNombreEmpleado.Text = $"Nombre: {empleado.Nombres} {empleado.Apellidos}";
-            lblDocumento.Text = $"Documento: {empleado.Documento}";
-            lblTipoMarcacion.Text = "Procesando...";
-            lblEstadoMarcacion.Text = "---";
+            lblNombreEmpleado.Text = $"👤 Nombre: {empleado.Nombres} {empleado.Apellidos}";
+            lblDocumento.Text = $"🆔 Documento: {empleado.Documento}";
+            lblTipoMarcacion.Text = "⏳ Procesando marcación...";
+            lblEstadoMarcacion.Text = "🔄 Verificando horario";
         }
 
         private void DeterminarTipoMarcacion(EmpleadoModel empleado)
@@ -447,17 +450,17 @@ namespace BiomentricoHolding.Views.Empleado
                     if (horaActual >= salida.AddHours(-1))
                     {
                         tipoMarcacion = 2;
-                        tipoTexto = "Salida";
+                        tipoTexto = "🚪 Salida";
                     }
                     else if (!yaMarcoHoy)
                     {
                         tipoMarcacion = 1;
-                        tipoTexto = "Entrada";
+                        tipoTexto = "✅ Entrada";
                     }
                     else
                     {
                         tipoMarcacion = 3;
-                        tipoTexto = "Novedad";
+                        tipoTexto = "⚠️ Novedad";
                         Logger.Agregar($"⚠️ {empleado.Nombres} realizó una marcación fuera de horario. Se registrará como NOVEDAD.");
                     }
 
@@ -504,12 +507,12 @@ namespace BiomentricoHolding.Views.Empleado
                     db.Marcaciones.Add(marcacion);
                     db.SaveChanges();
 
-                    lblTipoMarcacion.Text = tipoTexto;
-                    lblEstadoMarcacion.Text = "✔ Registrado";
+                    lblTipoMarcacion.Text = $"Marcación: {tipoTexto}";
+                    lblEstadoMarcacion.Text = "🎉 Registrado Exitosamente";
 
                     Logger.Agregar($"📝 {tipoTexto} registrada para {empleado.Nombres} ({empleado.Documento})");
 
-                    var ventanaConfirmacion = new MensajeWindow($"✅ {tipoTexto} registrada\nHora: {hoy:HH:mm:ss}", 2);
+                    var ventanaConfirmacion = new MensajeWindow($"🎉 ¡Marcación Registrada!\n\n📋 Tipo: {tipoTexto}\n🕐 Hora: {hoy:HH:mm:ss}\n📅 Fecha: {hoy:dd/MM/yyyy}", 3);
                     ventanaConfirmacion.Closed += async (s, e) =>
                     {
                         await ReiniciarCaptura();

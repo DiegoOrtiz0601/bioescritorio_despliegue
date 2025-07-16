@@ -9,7 +9,7 @@
         WindowStyle="None"
         Background="Transparent"
         AllowsTransparency="True">
-    <Border CornerRadius="10" Background="White" Padding="10" BorderBrush="Gray" BorderThickness="1">
+    <Border CornerRadius="10" Background="White" Padding="10" BorderBrush="Gray" BorderThickness="1" Effect="{DynamicResource DropShadow}">
         <local:ConfiguracionControl/>
     </Border>
 </Window>

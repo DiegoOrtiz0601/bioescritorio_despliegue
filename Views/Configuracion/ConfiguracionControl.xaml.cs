@@ -33,7 +33,7 @@ namespace BiomentricoHolding.Views.Configuracion
             {
                 Logger.Agregar("❌ Error al cargar las sedes: " + ex.Message);
                 MostrarLogEnPantalla();
-                MessageBox.Show("No se pudieron cargar las sedes.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MostrarToast("❌ Error al cargar las sedes desde la base de datos");
             }
         }
 
@@ -50,22 +50,21 @@ namespace BiomentricoHolding.Views.Configuracion
         {
             if (cmbSedes.SelectedItem is not Sede sedeSeleccionada)
             {
-                MostrarToast("Sede guardada correctamente.");
-
+                MostrarToast("⚠️ Por favor selecciona una sede antes de guardar.");
                 return;
             }
 
             ConfiguracionSistema.EstablecerConfiguracion(
-     ConfiguracionSistema.IdEmpresaActual ?? 0,
-     ConfiguracionSistema.NombreEmpresaActual ?? "Empresa desconocida",
-     sedeSeleccionada.IdSede,
-     sedeSeleccionada.Nombre
- );
+                ConfiguracionSistema.IdEmpresaActual ?? 0,
+                ConfiguracionSistema.NombreEmpresaActual ?? "Empresa desconocida",
+                sedeSeleccionada.IdSede,
+                sedeSeleccionada.Nombre
+            );
 
             Logger.Agregar($"✅ Sede guardada: {sedeSeleccionada.Nombre}");
             MostrarLogEnPantalla();
 
-            MessageBox.Show("Sede guardada correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+            MostrarToast($"✅ Sede '{sedeSeleccionada.Nombre}' guardada correctamente");
         }
 
         private void BtnDescargarLog_Click(object sender, RoutedEventArgs e)
@@ -79,14 +78,29 @@ namespace BiomentricoHolding.Views.Configuracion
             if (dlg.ShowDialog() == true)
             {
                 Logger.GuardarEnArchivo(dlg.FileName);
-                MessageBox.Show("Log descargado correctamente.", "Log", MessageBoxButton.OK, MessageBoxImage.Information);
+                MostrarToast("📥 Log del sistema descargado correctamente");
             }
         }
 
         private void MostrarLogEnPantalla()
         {
-            txtLog.Text = Logger.ObtenerContenido();
-            txtLog.ScrollToEnd();
+            try
+            {
+                // Verificar que estamos en el hilo correcto
+                if (!Dispatcher.CheckAccess())
+                {
+                    Dispatcher.BeginInvoke(new Action(MostrarLogEnPantalla));
+                    return;
+                }
+
+                txtLog.Text = Logger.ObtenerContenido();
+                txtLog.ScrollToEnd();
+            }
+            catch (Exception ex)
+            {
+                // Silenciar errores de actualización de UI
+                System.Diagnostics.Debug.WriteLine("Error al actualizar log en pantalla: " + ex.Message);
+            }
         }
 
         private void BtnSalir_Click(object sender, RoutedEventArgs e)
@@ -100,12 +114,55 @@ namespace BiomentricoHolding.Views.Configuracion
         }
         private async void MostrarToast(string mensaje)
         {
-            ToastMessage.Text = mensaje;
-            ToastContainer.Visibility = Visibility.Visible;
+            try
+            {
+                // Verificar que estamos en el hilo correcto
+                if (!Dispatcher.CheckAccess())
+                {
+                    Dispatcher.BeginInvoke(new Action(() => MostrarToast(mensaje)));
+                    return;
+                }
 
-            await Task.Delay(3000); // Espera 3 segundos
+                ToastMessage.Text = mensaje;
+                
+                // Determinar el tipo de mensaje basado en el emoji
+                if (mensaje.StartsWith("✅"))
+                {
+                    ToastBorder.Background = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#059669")); // Verde
+                    ToastIcon.Text = "✅";
+                }
+                else if (mensaje.StartsWith("⚠️"))
+                {
+                    ToastBorder.Background = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#D97706")); // Naranja
+                    ToastIcon.Text = "⚠️";
+                }
+                else if (mensaje.StartsWith("❌"))
+                {
+                    ToastBorder.Background = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#DC2626")); // Rojo
+                    ToastIcon.Text = "❌";
+                }
+                else if (mensaje.StartsWith("📥") || mensaje.StartsWith("🧹"))
+                {
+                    ToastBorder.Background = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#2563EB")); // Azul
+                    ToastIcon.Text = mensaje.StartsWith("📥") ? "📥" : "🧹";
+                }
+                else
+                {
+                    ToastBorder.Background = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#059669")); // Verde por defecto
+                    ToastIcon.Text = "✅";
+                }
+                
+                ToastContainer.Visibility = Visibility.Visible;
 
-            ToastContainer.Visibility = Visibility.Collapsed;
+                await Task.Delay(3000); // Espera 3 segundos
+
+                ToastContainer.Visibility = Visibility.Collapsed;
+            }
+            catch (Exception ex)
+            {
+                // Silenciar errores de actualización de UI
+                System.Diagnostics.Debug.WriteLine("Error al mostrar toast: " + ex.Message);
+            }
         }
         private void BtnLimpiarLog_Click(object sender, RoutedEventArgs e)
         {
@@ -115,7 +172,7 @@ namespace BiomentricoHolding.Views.Configuracion
             {
                 Logger.Limpiar();
                 MostrarLogEnPantalla();
-                MessageBox.Show("🧹 Log del sistema limpiado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                MostrarToast("🧹 Log del sistema limpiado correctamente");
             }
         }
 

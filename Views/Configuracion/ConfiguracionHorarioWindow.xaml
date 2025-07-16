@@ -1,0 +1,78 @@
+<Window x:Class="BiomentricoHolding.Views.Configuracion.ConfiguracionHorarioWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Configuración de Horario"
+        Height="300" Width="400"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#F3F4F6"
+        WindowStyle="None">
+
+    <Border Background="White"
+            CornerRadius="10"
+            Margin="10"
+            Effect="{DynamicResource DropShadow}">
+
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Título con header -->
+            <Border Background="#343a40"
+                    CornerRadius="6"
+                    Padding="10"
+                    Margin="0,0,0,20">
+                <DockPanel>
+                    <TextBlock Text="🕒 Configuración de Horario"
+                               Foreground="White"
+                               FontSize="16"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"/>
+                    <Button x:Name="btnCerrar" 
+                            Content="✕" 
+                            Foreground="White" 
+                            Background="Transparent" 
+                            BorderThickness="0"
+                            FontSize="16"
+                            Width="30"
+                            Height="30"
+                            HorizontalAlignment="Right"
+                            Margin="0,0,5,0"
+                            Click="BtnCerrar_Click"/>
+                </DockPanel>
+            </Border>
+
+            <!-- Contenido -->
+            <TextBlock Grid.Row="1" 
+                       Text="Configuración de horario en desarrollo..."
+                       FontSize="14" 
+                       Foreground="#666" 
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       TextWrapping="Wrap"/>
+
+            <!-- Botones de acción -->
+            <StackPanel Grid.Row="2" 
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Right">
+                <Button Style="{StaticResource BotonRojoRedondeado}" 
+                        Click="BtnCerrar_Click" 
+                        Width="100">
+                    <TextBlock Text="Cerrar"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+
+    <Window.Resources>
+        <DropShadowEffect x:Key="DropShadow"
+                  Color="Black"
+                  Direction="270"
+                  ShadowDepth="4"
+                  BlurRadius="12"
+                  Opacity="0.4"/>
+    </Window.Resources>
+</Window> 

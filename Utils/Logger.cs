@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text;
+using System.Windows.Threading;
 
 namespace BiomentricoHolding.Utils
 {
@@ -36,7 +37,29 @@ namespace BiomentricoHolding.Utils
                 System.Diagnostics.Debug.WriteLine("Error al escribir en el log: " + ex.Message);
             }
 
-            LogActualizado?.Invoke(); // Notificar UI si corresponde
+            // Invocar evento de forma thread-safe
+            try
+            {
+                if (LogActualizado != null)
+                {
+                    // Si estamos en el hilo de la UI, invocar directamente
+                    if (System.Windows.Application.Current?.Dispatcher != null && 
+                        System.Windows.Application.Current.Dispatcher.CheckAccess())
+                    {
+                        LogActualizado.Invoke();
+                    }
+                    else
+                    {
+                        // Si estamos en otro hilo, invocar en el hilo de la UI
+                        System.Windows.Application.Current?.Dispatcher?.BeginInvoke(DispatcherPriority.Normal, LogActualizado);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Silenciar errores de invocación de eventos
+                System.Diagnostics.Debug.WriteLine("Error al invocar evento LogActualizado: " + ex.Message);
+            }
         }
 
         public static string ObtenerContenido() => _contenido.ToString();
@@ -49,8 +72,41 @@ namespace BiomentricoHolding.Utils
         public static void Limpiar()
         {
             _contenido.Clear();
-            File.Delete(_logFilePath);
-            LogActualizado?.Invoke();
+            try
+            {
+                if (File.Exists(_logFilePath))
+                {
+                    File.Delete(_logFilePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error al eliminar archivo de log: " + ex.Message);
+            }
+
+            // Invocar evento de forma thread-safe
+            try
+            {
+                if (LogActualizado != null)
+                {
+                    // Si estamos en el hilo de la UI, invocar directamente
+                    if (System.Windows.Application.Current?.Dispatcher != null && 
+                        System.Windows.Application.Current.Dispatcher.CheckAccess())
+                    {
+                        LogActualizado.Invoke();
+                    }
+                    else
+                    {
+                        // Si estamos en otro hilo, invocar en el hilo de la UI
+                        System.Windows.Application.Current?.Dispatcher?.BeginInvoke(DispatcherPriority.Normal, LogActualizado);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Silenciar errores de invocación de eventos
+                System.Diagnostics.Debug.WriteLine("Error al invocar evento LogActualizado: " + ex.Message);
+            }
         }
     }
 }

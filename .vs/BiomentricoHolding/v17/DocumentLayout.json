@@ -3,24 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|c:\\users\\diego vml\\documents\\proyectos\\biometricoescritorio\\sistemabiometricowpf\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|c:\\users\\diego vml\\documents\\proyectos\\biometricoescritorio\\sistemabiometricowpf\\services\\capturahuellaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|solutionrelative:services\\capturahuellaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|c:\\users\\diego vml\\documents\\proyectos\\biometricoescritorio\\sistemabiometricowpf\\views\\empleado\\capturarhuellawindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|solutionrelative:views\\empleado\\capturarhuellawindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|c:\\users\\diego vml\\documents\\proyectos\\biometricoescritorio\\sistemabiometricowpf\\views\\empleado\\capturaentradasalidawindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|solutionrelative:views\\empleado\\capturaentradasalidawindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|c:\\users\\diego vml\\documents\\proyectos\\biometricoescritorio\\sistemabiometricowpf\\views\\empleado\\registrarempleado.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|solutionrelative:views\\empleado\\registrarempleado.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -35,64 +19,15 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\appsettings.json",
-              "RelativeDocumentMoniker": "appsettings.json",
-              "ToolTip": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\appsettings.json",
-              "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-07-04T03:26:38.97Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CapturaHuellaService.cs",
-              "DocumentMoniker": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Services\\CapturaHuellaService.cs",
-              "RelativeDocumentMoniker": "Services\\CapturaHuellaService.cs",
-              "ToolTip": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Services\\CapturaHuellaService.cs",
-              "RelativeToolTip": "Services\\CapturaHuellaService.cs",
-              "ViewState": "AgIAAKYAAAAAAAAAAAAiwMcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-02T18:16:40.741Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "RegistrarEmpleado.xaml.cs",
-              "DocumentMoniker": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Views\\Empleado\\RegistrarEmpleado.xaml.cs",
-              "RelativeDocumentMoniker": "Views\\Empleado\\RegistrarEmpleado.xaml.cs",
-              "ToolTip": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Views\\Empleado\\RegistrarEmpleado.xaml.cs",
-              "RelativeToolTip": "Views\\Empleado\\RegistrarEmpleado.xaml.cs",
-              "ViewState": "AgIAAMIBAAAAAAAAAAAkwPABAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-02T18:15:55.239Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "CapturarHuellaWindow.xaml.cs",
-              "DocumentMoniker": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Views\\Empleado\\CapturarHuellaWindow.xaml.cs",
-              "RelativeDocumentMoniker": "Views\\Empleado\\CapturarHuellaWindow.xaml.cs",
-              "ToolTip": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Views\\Empleado\\CapturarHuellaWindow.xaml.cs",
-              "RelativeToolTip": "Views\\Empleado\\CapturarHuellaWindow.xaml.cs",
-              "ViewState": "AgIAAGsAAAAAAAAAAAAiwIwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-02T18:15:12.902Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
               "Title": "CapturaEntradaSalidaWindow.xaml.cs",
               "DocumentMoniker": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Views\\Empleado\\CapturaEntradaSalidaWindow.xaml.cs",
               "RelativeDocumentMoniker": "Views\\Empleado\\CapturaEntradaSalidaWindow.xaml.cs",
               "ToolTip": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Views\\Empleado\\CapturaEntradaSalidaWindow.xaml.cs",
               "RelativeToolTip": "Views\\Empleado\\CapturaEntradaSalidaWindow.xaml.cs",
-              "ViewState": "AgIAAFUBAAAAAAAAAAAqwHcBAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABoAAAAAAAAAAADgvxUCAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-05T13:52:46.396Z"
+              "WhenOpened": "2025-07-15T16:56:23.616Z",
+              "EditorCaption": ""
             }
           ]
         }

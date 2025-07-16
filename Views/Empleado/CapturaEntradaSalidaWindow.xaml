@@ -3,143 +3,255 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Registro de Entrada / Salida"
         WindowStartupLocation="CenterScreen"
-        Width="720" Height="500"
-        Background="#f8f9fa"
+        Width="1055" Height="769"
+        Background="#F8F9FA"
         ResizeMode="NoResize">
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <!-- Título -->
-            <RowDefinition Height="Auto"/>
-            <!-- Reloj -->
-            <RowDefinition Height="*"/>
-            <!-- Contenido -->
-            <RowDefinition Height="Auto"/>
-            <!-- Botón -->
-        </Grid.RowDefinitions>
+    <Border Background="White"
+            CornerRadius="16"
+            Margin="30"
+            Padding="30"
+            Effect="{StaticResource VMLDropShadow}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" MinHeight="80"/>
+                <!-- Título -->
+                <RowDefinition Height="Auto" MinHeight="82"/>
+                <!-- Reloj -->
+                <RowDefinition/>
+                <!-- Contenido -->
+                <RowDefinition Height="Auto"/>
+                <!-- Botón -->
+            </Grid.RowDefinitions>
 
-        <!-- Título con ícono -->
-        <StackPanel Grid.Row="0"
+            <!-- Título con ícono -->
+            <StackPanel Grid.Row="0"
                     Orientation="Horizontal"
                     HorizontalAlignment="Center"
-                    Margin="0,0,0,10">
-            <Image Source="/Recursos/icono_entrada_salida.png"
-                   Width="32"
-                   Height="32"
-                   Margin="0,0,10,0"/>
-            <TextBlock Text="Registro de Entrada y Salida"
+                    Margin="0,0,0,25" Width="367">
+                <TextBlock Text="📌"
+                       FontSize="28"
+                       Margin="0,0,12,0"
+                       VerticalAlignment="Center"/>
+                <TextBlock Text="Registro de Entrada y Salida"
                        FontSize="24"
                        FontWeight="Bold"
-                       Foreground="#212529"
+                       Foreground="#1E3A8A"
                        VerticalAlignment="Center"/>
-        </StackPanel>
-
-        <!-- Reloj -->
-        <!-- Reloj + Fecha -->
-        <StackPanel Grid.Row="1"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Margin="0,10,0,10">
-            <TextBlock x:Name="txtReloj"
-               FontSize="36"
-               FontWeight="Bold"
-               Foreground="#c70100"
-               HorizontalAlignment="Center"/>
-            <TextBlock x:Name="txtFecha"
-               FontSize="16"
-               Foreground="Gray"
-               HorizontalAlignment="Center"
-               Margin="0,4,0,0"/>
-        </StackPanel>
-
-        <!-- Contenedor principal horizontal: datos + huella -->
-        <Grid Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="2*" />
-            </Grid.ColumnDefinitions>
-
-            <!-- Panel de datos -->
-            <StackPanel Grid.Column="0" Width="400" Margin="0,0,20,0">
-                <TextBlock x:Name="txtEstadoHuella"
-                           Text="Por favor coloque su dedo en el lector"
-                           FontSize="18"
-                           TextAlignment="Center"
-                           Foreground="Gray"
-                           Margin="0,10"/>
-
-                <Border Background="White"
-                        BorderBrush="#dee2e6"
-                        BorderThickness="1"
-                        CornerRadius="8"
-                        Padding="20"
-                        Margin="0,10">
-                    <StackPanel>
-                        <TextBlock x:Name="lblNombreEmpleado"
-                                   Text="Nombre: ---"
-                                   FontSize="16"
-                                   Margin="0,5"/>
-                        <TextBlock x:Name="lblDocumento"
-                                   Text="Documento: ---"
-                                   FontSize="16"
-                                   Margin="0,5"/>
-                        <TextBlock x:Name="lblTipoMarcacion"
-                                   Text="Marcación: ---"
-                                   FontSize="16"
-                                   Margin="0,5"/>
-                        <TextBlock x:Name="lblEstadoMarcacion"
-                                   Text="Estado: ---"
-                                   FontSize="16"
-                                   Margin="0,5"
-                                   Foreground="DarkGreen"/>
-                    </StackPanel>
-                </Border>
             </StackPanel>
 
-            <!-- Imagen de huella -->
-            <Border Grid.Column="1"
-                    Width="200"
-                    Height="240"
+            <!-- Reloj + Fecha -->
+            <StackPanel Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center" Height="82" Width="0">
+                <TextBlock x:Name="txtReloj"
+               FontSize="38"
+               FontWeight="Bold"
+               Foreground="#DC2626"
+               HorizontalAlignment="Center"/>
+                <TextBlock x:Name="txtFecha"
+               FontSize="16"
+               Foreground="#6B7280"
+               HorizontalAlignment="Center"
+               Margin="0,10,0,0"/>
+            </StackPanel>
+
+            <!-- Contenedor principal horizontal: datos + huella -->
+            <Grid Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Height="314" Width="827">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2.5*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Panel de datos -->
+                <StackPanel Grid.Column="0" Margin="0,0,40,0">
+                    <!-- Estado del lector -->
+                    <Border Background="#FEF3C7"
+                        BorderBrush="#F59E0B"
+                        BorderThickness="2"
+                        CornerRadius="12"
+                        Padding="20"
+                        Margin="0,0,0,15">
+                        <StackPanel>
+                            <TextBlock Text="🔍 Estado del Lector"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Foreground="#92400E"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,8"/>
+                            <TextBlock x:Name="txtEstadoHuella"
+                                       Text="👆 Por favor coloque su dedo en el lector"
+                                       FontSize="15"
+                                       TextAlignment="Center"
+                                       Foreground="#92400E"
+                                       FontWeight="SemiBold"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Información del empleado -->
+                    <Border Background="White"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="2"
+                        CornerRadius="12"
+                        Padding="20"
+                        Margin="0,0,0,15">
+                        <StackPanel>
+                            <TextBlock Text="👤 Información del Empleado"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Foreground="#374151"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,12"/>
+                            
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Nombre:"
+                                           FontSize="15"
+                                           FontWeight="SemiBold"
+                                           Foreground="#6B7280"
+                                           Grid.Column="0"/>
+                                <TextBlock x:Name="lblNombreEmpleado"
+                                           Text="---"
+                                           FontSize="15"
+                                           FontWeight="SemiBold"
+                                           Foreground="#374151"
+                                           Grid.Column="1"
+                                           Margin="10,0,0,0"/>
+                            </Grid>
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Documento:"
+                                           FontSize="15"
+                                           FontWeight="SemiBold"
+                                           Foreground="#6B7280"
+                                           Grid.Column="0"/>
+                                <TextBlock x:Name="lblDocumento"
+                                           Text="---"
+                                           FontSize="15"
+                                           FontWeight="SemiBold"
+                                           Foreground="#374151"
+                                           Grid.Column="1"
+                                           Margin="10,0,0,0"/>
+                            </Grid>
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Marcación:"
+                                           FontSize="15"
+                                           FontWeight="SemiBold"
+                                           Foreground="#6B7280"
+                                           Grid.Column="0"/>
+                                <TextBlock x:Name="lblTipoMarcacion"
+                                           Text="---"
+                                           FontSize="15"
+                                           FontWeight="SemiBold"
+                                           Foreground="#374151"
+                                           Grid.Column="1"
+                                           Margin="10,0,0,0"/>
+                            </Grid>
+
+                            <Grid Margin="0,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Estado:"
+                                           FontSize="15"
+                                           FontWeight="SemiBold"
+                                           Foreground="#6B7280"
+                                           Grid.Column="0"/>
+                                <TextBlock x:Name="lblEstadoMarcacion"
+                                           Text="---"
+                                           FontSize="15"
+                                           FontWeight="SemiBold"
+                                           Foreground="#059669"
+                                           Grid.Column="1"
+                                           Margin="10,0,0,0"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Mensaje de confirmación -->
+                    <Border Background="#F0F9FF"
+                        BorderBrush="#0EA5E9"
+                        BorderThickness="2"
+                        CornerRadius="12"
+                        Padding="20"
+                        x:Name="borderMensajeConfirmacion"
+                        Visibility="Collapsed">
+                        <StackPanel>
+                            <TextBlock Text="✅ Confirmación de Marcación"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Foreground="#0C4A6E"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,8"/>
+                            <TextBlock x:Name="txtMensajeConfirmacion"
+                                       Text=""
+                                       FontSize="15"
+                                       TextAlignment="Center"
+                                       Foreground="#0C4A6E"
+                                       FontWeight="SemiBold"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Imagen de huella -->
+                <Border Grid.Column="1"
                     Background="White"
-                    BorderBrush="#dee2e6"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="10"
-                    VerticalAlignment="Center">
-                <Image x:Name="imgHuella"
-                       Width="180"
+                    BorderBrush="#E5E7EB"
+                    BorderThickness="2"
+                    CornerRadius="12"
+                    Padding="20"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+                    <Image x:Name="imgHuella"
+                       Width="200"
                        Height="220"
                        Stretch="Uniform"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
-            </Border>
-        </Grid>
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"/>
+                </Border>
+            </Grid>
 
-        <!-- Botón reiniciar -->
-        <Button Grid.Row="3"
-                Content="Reiniciar Captura"
+            <!-- Botón reiniciar -->
+            <Button Grid.Row="3"
+                Content="🔄 Reiniciar Captura"
                 Click="BtnReiniciar_Click"
                 HorizontalAlignment="Center"
-                Margin="0,10"
-                Padding="12,6"
-                Background="#c70100"
+                Margin="0,25,0,25"
+                Padding="20,12"
+                Background="#DC2626"
                 Foreground="White"
                 FontWeight="Bold"
+                FontSize="15"
                 Width="200"
                 BorderThickness="0"
                 Cursor="Hand">
-            <Button.Template>
-                <ControlTemplate TargetType="Button">
-                    <Border Background="{TemplateBinding Background}"
-                            CornerRadius="6"
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                            CornerRadius="8"
                             Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="Center"
+                            <ContentPresenter HorizontalAlignment="Center"
                                           VerticalAlignment="Center"
                                           TextElement.FontWeight="Bold"/>
-                    </Border>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
-    </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </Grid>
+    </Border>
 </Window>
