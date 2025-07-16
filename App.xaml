@@ -4,6 +4,21 @@
     
 
     <Application.Resources>
+        
+        <!-- 🎨 Paleta de colores VML Technologies (Modo Oscuro) -->
+        <SolidColorBrush x:Key="VMLPrimary" Color="#111827"/> <!-- dark:bg-gray-900 -->
+        <SolidColorBrush x:Key="VMLSecondary" Color="#1F2937"/> <!-- dark:bg-gray-800 -->
+        <SolidColorBrush x:Key="VMLAccent" Color="#EF4444"/> <!-- vml-red -->
+        <SolidColorBrush x:Key="VMLSuccess" Color="#10B981"/>
+        <SolidColorBrush x:Key="VMLWarning" Color="#F59E0B"/>
+        <SolidColorBrush x:Key="VMLDark" Color="#374151"/> <!-- dark:bg-gray-700 -->
+        <SolidColorBrush x:Key="VMLGray" Color="#6B7280"/> <!-- dark:text-gray-400 -->
+        <SolidColorBrush x:Key="VMLGrayLight" Color="#9CA3AF"/> <!-- dark:text-gray-500 -->
+        <SolidColorBrush x:Key="VMLWhite" Color="#FFFFFF"/> <!-- dark:text-white -->
+        <SolidColorBrush x:Key="VMLGrayBorder" Color="#4B5563"/> <!-- dark:border-gray-600 -->
+        <SolidColorBrush x:Key="VMLRedBorder" Color="#991B1B"/> <!-- dark:border-red-800 -->
+        <SolidColorBrush x:Key="VMLRedText" Color="#F87171"/> <!-- dark:text-red-400 -->
+        <SolidColorBrush x:Key="VMLRedBg" Color="#7F1D1D"/> <!-- dark:bg-red-900 -->
 
         <!-- 🎯 Estilo de botón para la barra lateral -->
         <Style x:Key="SidebarButtonStyle" TargetType="Button">
@@ -11,15 +26,15 @@
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Margin" Value="10,5"/>
-            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Margin" Value="12,6"/>
+            <Setter Property="Padding" Value="16,12"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}"
-                                CornerRadius="8"
+                                CornerRadius="10"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter VerticalAlignment="Center"/>
                         </Border>
@@ -28,24 +43,29 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#374151"/>
+                    <Setter Property="Background" Value="#1E293B"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#334155"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
-        <!-- 🔴 Estilo general para botones rojos -->
-        <Style x:Key="BotonRojo" TargetType="Button">
-            <Setter Property="Background" Value="#680307"/>
+        <!-- 🔴 Estilo principal para botones VML -->
+        <Style x:Key="VMLButtonPrimary" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource VMLButtonGradient}"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Height" Value="35"/>
-            <Setter Property="Width" Value="150"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="20,12"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}"
-                                CornerRadius="6"
+                                CornerRadius="8"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center"
                                               VerticalAlignment="Center"/>
@@ -55,20 +75,183 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#343a40"/>
+                    <Setter Property="Background" Value="#3B82F6"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#1E40AF"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
-    
+        <!-- ⚠️ Estilo para botones de advertencia/error -->
+        <Style x:Key="VMLButtonDanger" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource VMLAccent}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#EF4444"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#DC2626"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
-        <!-- 🌑 Sombra para bordes o modales -->
-        <DropShadowEffect x:Key="DropShadow"
+        <!-- 🔘 Estilo para botones secundarios -->
+        <Style x:Key="VMLButtonSecondary" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource VMLGray}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#9CA3AF"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#6B7280"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- 📝 Estilo para TextBox (Modo Oscuro VML) -->
+        <Style x:Key="VMLTextBox" TargetType="TextBox">
+            <Setter Property="Background" Value="{StaticResource VMLDark}"/> <!-- dark:bg-gray-700 -->
+            <Setter Property="Foreground" Value="{StaticResource VMLWhite}"/> <!-- dark:text-white -->
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="BorderBrush" Value="{StaticResource VMLGrayBorder}"/> <!-- dark:border-gray-600 -->
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource VMLAccent}"/> <!-- vml-red -->
+                    <Setter Property="BorderThickness" Value="2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- 📋 Estilo para ComboBox (Modo Oscuro VML) -->
+        <Style x:Key="VMLComboBox" TargetType="ComboBox">
+            <Setter Property="Background" Value="{StaticResource VMLDark}"/> <!-- dark:bg-gray-700 -->
+            <Setter Property="Foreground" Value="{StaticResource VMLWhite}"/> <!-- dark:text-white -->
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="BorderBrush" Value="{StaticResource VMLGrayBorder}"/> <!-- dark:border-gray-600 -->
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <!-- 🌑 Sombra moderna para elementos -->
+        <DropShadowEffect x:Key="VMLDropShadow"
                           Color="Black"
-                          Direction="320"
-                          ShadowDepth="5"
-                          BlurRadius="10"
-                          Opacity="0.3"/>
+                          Direction="270"
+                          ShadowDepth="4"
+                          BlurRadius="12"
+                          Opacity="0.15"/>
+
+        <!-- 🌟 Sombra suave para cards -->
+        <DropShadowEffect x:Key="VMLCardShadow"
+                          Color="Black"
+                          Direction="270"
+                          ShadowDepth="2"
+                          BlurRadius="8"
+                          Opacity="0.1"/>
+
+        <!-- 🎨 Gradiente vertical suave para fondos (Modo Oscuro VML) -->
+        <LinearGradientBrush x:Key="VMLGradientBackground" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#111827" Offset="0"/> <!-- dark:bg-gray-900 -->
+            <GradientStop Color="#1F2937" Offset="0.3"/> <!-- dark:bg-gray-800 -->
+            <GradientStop Color="#374151" Offset="0.6"/> <!-- dark:bg-gray-700 -->
+            <GradientStop Color="#4B5563" Offset="0.8"/> <!-- dark:border-gray-600 -->
+            <GradientStop Color="#111827" Offset="1"/> <!-- dark:bg-gray-900 -->
+        </LinearGradientBrush>
+
+        <!-- 🌟 Gradiente radial suave para efectos de luz (Modo Oscuro VML) -->
+        <RadialGradientBrush x:Key="VMLRadialGradient" Center="0.5,0.5" RadiusX="0.9" RadiusY="0.9">
+            <GradientStop Color="#EF4444" Offset="0"/> <!-- vml-red con opacidad -->
+            <GradientStop Color="#DC2626" Offset="0.3"/>
+            <GradientStop Color="#B91C1C" Offset="0.6"/>
+            <GradientStop Color="#991B1B" Offset="0.8"/> <!-- dark:border-red-800 -->
+            <GradientStop Color="Transparent" Offset="1"/>
+        </RadialGradientBrush>
+
+        <!-- 🎯 Gradiente suave para botones (Modo Oscuro VML) -->
+        <LinearGradientBrush x:Key="VMLButtonGradient" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#EF4444" Offset="0"/> <!-- vml-red -->
+            <GradientStop Color="#DC2626" Offset="0.5"/>
+            <GradientStop Color="#B91C1C" Offset="1"/>
+        </LinearGradientBrush>
+
+        <!-- 🌟 Efecto de vidrio esmerilado (backdrop blur) -->
+        <BlurEffect x:Key="VMLBackdropBlur" Radius="4"/>
+
+        <!-- 🎨 Gradiente con opacidad reducida para formas geométricas -->
+        <LinearGradientBrush x:Key="VMLGeometricGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#0DEF4444" Offset="0"/> <!-- vml-red con 5% opacidad -->
+            <GradientStop Color="#0D6B7280" Offset="1"/> <!-- vml-gray con 5% opacidad -->
+        </LinearGradientBrush>
+
+        <!-- ⚠️ Estilo para mensajes de error -->
+        <Style x:Key="VMLErrorMessage" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource VMLRedText}"/> <!-- dark:text-red-400 -->
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Margin" Value="0,4,0,0"/>
+        </Style>
+
+        <!-- 🎯 Estilo para contenedores con fondo semitransparente -->
+        <Style x:Key="VMLContainerStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource VMLSecondary}"/> <!-- dark:bg-gray-800 -->
+            <Setter Property="Opacity" Value="0.9"/> <!-- /90 -->
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Effect" Value="{StaticResource VMLCardShadow}"/>
+        </Style>
 
     </Application.Resources>
 </Application>
