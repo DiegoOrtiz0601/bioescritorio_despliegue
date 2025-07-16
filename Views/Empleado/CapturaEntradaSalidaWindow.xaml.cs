@@ -397,7 +397,7 @@ namespace BiomentricoHolding.Views.Empleado
 
                     var hoy = DateTime.Now;
                     var diaSemana = (int)hoy.DayOfWeek;
-                    diaSemana = diaSemana == 0 ? 1 : diaSemana + 1;
+                    diaSemana = diaSemana == 0 ? 1 : diaSemana;
 
                     var asignacion = db.AsignacionHorarios
                         .FirstOrDefault(a => a.IdEmpleado == empleado.IdEmpleado && a.Estado);

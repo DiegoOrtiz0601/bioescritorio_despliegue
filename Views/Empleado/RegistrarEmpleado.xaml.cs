@@ -337,7 +337,7 @@ namespace BiomentricoHolding.Views.Empleado
                             IdAsignacion = asignacion.Id,
                             DiaSemana = dia,
                             HoraInicio = TimeOnly.Parse("07:00:00"),
-                            HoraFin = (dia == 5 || dia == 6) ? TimeOnly.Parse("16:30:00") : TimeOnly.Parse("17:30:00")
+                            HoraFin = (dia == 6 || dia == 7) ? TimeOnly.Parse("16:30:00") : TimeOnly.Parse("17:30:00")
                         });
                     }
 

@@ -25,7 +25,7 @@ namespace BiomentricoHolding.Views.Empleado
 
         private void GenerarControlesPorDia()
         {
-            string[] dias = { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" };
+            string[] dias = { "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" };
             string[] iconos = { "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣" };
 
             for (int i = 0; i < dias.Length; i++)
@@ -233,7 +233,7 @@ namespace BiomentricoHolding.Views.Empleado
 
         private string GetNombreDia(int diaSemana)
         {
-            string[] dias = { "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" };
+            string[] dias = { "", "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" };
             return dias[diaSemana];
         }
 

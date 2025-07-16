@@ -173,7 +173,8 @@ namespace BiomentricoHolding.Views.Reportes
                 // Si no hay una salida explícita, tomar la última marcación como salida
                 var salida = salidas.FirstOrDefault() ?? grupo.OrderByDescending(m => m.FechaHora).FirstOrDefault();
 
-                var diaSemana = (int)fecha.DayOfWeek + 1;
+                var diaSemana = (int)fecha.DayOfWeek;
+                diaSemana = diaSemana == 0 ? 1 : diaSemana;
                 var horario = horarios.FirstOrDefault(h => h.DiaSemana == diaSemana);
 
                 var horaEsperadaEntrada = horario?.Inicio.ToTimeSpan();
