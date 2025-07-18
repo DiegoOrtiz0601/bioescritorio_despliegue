@@ -446,19 +446,28 @@ namespace BiomentricoHolding.Views.Empleado
                     int tipoMarcacion;
                     string tipoTexto;
                     
-                    // Si está dentro del rango de salida o después de la salida → Salida
-                    if (horaActual >= salida.AddHours(-1))
+                    // LÓGICA MEJORADA: Priorizar si es primera marcación del día
+                    if (!yaMarcoHoy)
                     {
+                        // Si es la primera marcación del día, siempre es ENTRADA
+                        tipoMarcacion = 1;
+                        tipoTexto = "✅ Entrada";
+                        
+                        // Si está en rango de salida, registrar advertencia
+                        if (horaActual >= salida.AddHours(-1))
+                        {
+                            Logger.Agregar($"⚠️ {empleado.Nombres} realizó su entrada tarde (en rango de salida). Hora: {horaActual:HH:mm}, Salida programada: {salida:HH:mm}");
+                        }
+                    }
+                    else if (horaActual >= salida.AddHours(-1))
+                    {
+                        // Si ya marcó hoy y está en rango de salida → SALIDA
                         tipoMarcacion = 2;
                         tipoTexto = "🚪 Salida";
                     }
-                    else if (!yaMarcoHoy)
-                    {
-                        tipoMarcacion = 1;
-                        tipoTexto = "✅ Entrada";
-                    }
                     else
                     {
+                        // Si ya marcó hoy pero no está en rango de salida → NOVEDAD
                         tipoMarcacion = 3;
                         tipoTexto = "⚠️ Novedad";
                         Logger.Agregar($"⚠️ {empleado.Nombres} realizó una marcación fuera de horario. Se registrará como NOVEDAD.");
@@ -531,7 +540,7 @@ namespace BiomentricoHolding.Views.Empleado
                     if (_capturaService.VerificarLector())
                     {
                         _capturaService.IniciarCaptura();
-                    }
+                      }
                     else
                     {
                         Logger.Agregar("❌ No se pudo reiniciar captura. Lector no disponible.");
