@@ -1,82 +1,37 @@
-# Build results
-[Bb]in/
-[Oo]bj/
-[Ll]og/
-*.log
-
-# User-specific files
+# Archivos de Visual Studio
+.vs/
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
 
-# VS Code
-.vscode/
-
-# Rider
-.idea/
-
-# Visual Studio cache files
-*.vc.db
-*.vscode/
-
-# Build logs
-*.tlog
-*.log
-
-# NuGet
-*.nupkg
-*.snupkg
-.nuget/
-packages/
-project.lock.json
-project.fragment.lock.json
-artifacts/
-
-# DotCover
-*.dcvr
-
-# Resharper
-_ReSharper*/
-*.DotSettings.user
-
-# TFS
-$tf/
-
-# Microsoft Azure Web Apps
-.publish/
-
-# IIS Express
-*.vspscc
-.vs/
-
-# ASP.NET Scaffolding
-ScaffoldingReadMe.txt
-
-# Runtime files
-*.db
-*.pdb
-*.mdb
+# Binarios y compilados
+bin/
+obj/
 *.exe
 *.dll
-
-# Local test results
-TestResults/
-*.testsettings
-*.vsmdi
-*.cache
-*.coverage
-*.coveragexml
-
-# Entity Framework
-App_Data/
-
-# Logs
+*.pdb
+*.app
 *.log
-*.nlog
 
-# Others
+# Archivos de configuración local
+*.local.json
+*.launch.json
+
+# Archivos temporales
 *.tmp
+*.temp
 *.bak
-*.old
-*.orig
+*.log
+
+# Archivos generados por diseño de interfaz
+*.g.cs
+*.g.i.cs
+
+# Otros
+_ReSharper*/
+*.ncrunch*
+*.vshost.*
+TestResult*/
+*.coverage
+*.vsidx

@@ -88,11 +88,6 @@
                         Style="{StaticResource SidebarButtonStyle}"
                         Margin="10,5,10,5" />
 
-                <Button Content="🗂 Consultar Registros"
-                        Click="BtnConsultarRegistros_Click"
-                        Style="{StaticResource SidebarButtonStyle}"
-                        Margin="10,5,10,5" />
-
                 <Button Content="⚙ Configuración"
                         Click="BtnConfiguracion_Click"
                         Style="{StaticResource SidebarButtonStyle}"

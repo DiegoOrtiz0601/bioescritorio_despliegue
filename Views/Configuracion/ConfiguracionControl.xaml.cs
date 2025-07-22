@@ -1,39 +1,87 @@
-﻿using BiomentricoHolding.Data.DataBaseRegistro_Test;
+﻿using BiomentricoHolding.Data;
 using BiomentricoHolding.Utils;
+using BiomentricoHolding.Views;
 using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Controls;
+using System.Threading.Tasks;
 
 namespace BiomentricoHolding.Views.Configuracion
 {
     public partial class ConfiguracionControl : UserControl
     {
-        private readonly DataBaseRegistro_TestDbContext _context = AppSettings.GetContextUno();
+        private readonly BiometricoDbContext _context = AppSettings.GetContextUno();
 
         public ConfiguracionControl()
         {
             InitializeComponent();
             ConfiguracionSistema.CargarConfiguracion();
-            CargarSedesDesdeBD();
-            MostrarConfiguracionActual();
+            CargarEmpresasDesdeBD();
+            
+            // Cargar configuración actual después de que se hayan cargado las empresas
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                MostrarConfiguracionActual();
+            }));
+            
             MostrarLogEnPantalla();
             Logger.LogActualizado += MostrarLogEnPantalla;
         }
 
-        private void CargarSedesDesdeBD()
+        private void CargarEmpresasDesdeBD()
         {
             try
             {
-                var sedes = _context.Sedes.OrderBy(s => s.Nombre).ToList();
-                cmbSedes.ItemsSource = sedes;
-                cmbSedes.DisplayMemberPath = "Nombre";
-                cmbSedes.SelectedValuePath = "IdSede";
+                var empresas = _context.Empresas.OrderBy(e => e.Nombre).ToList();
+                cmbEmpresas.ItemsSource = empresas;
+                cmbEmpresas.DisplayMemberPath = "Nombre";
+                cmbEmpresas.SelectedValuePath = "IdEmpresa";
+                
+                // Configurar evento de cambio de empresa
+                cmbEmpresas.SelectionChanged += CmbEmpresas_SelectionChanged;
+                
+                Logger.Agregar("✅ Empresas cargadas correctamente");
             }
             catch (Exception ex)
             {
-                Logger.Agregar("❌ Error al cargar las sedes: " + ex.Message);
+                Logger.Agregar("❌ Error al cargar las empresas: " + ex.Message);
                 MostrarLogEnPantalla();
-                MostrarToast("❌ Error al cargar las sedes desde la base de datos");
+                MostrarToast("❌ Error al cargar las empresas desde la base de datos");
+            }
+        }
+
+        private void CmbEmpresas_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cmbEmpresas.SelectedValue is int idEmpresa)
+            {
+                try
+                {
+                    // Obtener sedes a través de la tabla intermedia SedeCiudadEmpresaArea
+                    var sedes = _context.SedeCiudadEmpresaAreas
+                        .Where(sca => sca.IdEmpresa == idEmpresa)
+                        .Select(sca => sca.IdSedeNavigation)
+                        .Where(s => s.Estado == true || s.Estado == null) // Incluir null como válido
+                        .Distinct()
+                        .OrderBy(s => s.Nombre)
+                        .ToList();
+
+                    cmbSedes.ItemsSource = sedes;
+                    cmbSedes.DisplayMemberPath = "Nombre";
+                    cmbSedes.SelectedValuePath = "IdSede";
+                    
+                    // Solo limpiar selección si no estamos cargando la configuración inicial
+                    if (!ConfiguracionSistema.EstaConfigurado || ConfiguracionSistema.IdEmpresaActual != idEmpresa)
+                    {
+                        cmbSedes.SelectedIndex = -1;
+                    }
+                    
+                    Logger.Agregar($"✅ Sedes cargadas para empresa ID {idEmpresa}");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Agregar($"❌ Error al cargar sedes para empresa {idEmpresa}: {ex.Message}");
+                    MostrarToast("❌ Error al cargar las sedes");
+                }
             }
         }
 
@@ -41,30 +89,111 @@ namespace BiomentricoHolding.Views.Configuracion
         {
             if (ConfiguracionSistema.EstaConfigurado)
             {
-                cmbSedes.SelectedValue = ConfiguracionSistema.IdSedeActual;
-                Logger.Agregar($"✔️ Sede actual cargada: {ConfiguracionSistema.NombreSedeActual}");
+                try
+                {
+                    // Seleccionar empresa actual
+                    Logger.Agregar($"🔍 Intentando seleccionar empresa: {ConfiguracionSistema.IdEmpresaActual} - {ConfiguracionSistema.NombreEmpresaActual}");
+                    cmbEmpresas.SelectedValue = ConfiguracionSistema.IdEmpresaActual;
+                    
+                    // Cargar sedes de la empresa actual
+                    if (ConfiguracionSistema.IdEmpresaActual.HasValue)
+                    {
+                        // Obtener sedes a través de la tabla intermedia SedeCiudadEmpresaArea
+                        var sedes = _context.SedeCiudadEmpresaAreas
+                            .Where(sca => sca.IdEmpresa == ConfiguracionSistema.IdEmpresaActual.Value)
+                            .Select(sca => sca.IdSedeNavigation)
+                            .Where(s => s.Estado == true || s.Estado == null) // Incluir null como válido
+                            .Distinct()
+                            .OrderBy(s => s.Nombre)
+                            .ToList();
+
+                        cmbSedes.ItemsSource = sedes;
+                        cmbSedes.DisplayMemberPath = "Nombre";
+                        cmbSedes.SelectedValuePath = "IdSede";
+                        Logger.Agregar($"🔍 Sedes cargadas para configuración: {sedes.Count} sedes");
+                        
+                        // Seleccionar sede actual después de un pequeño delay para asegurar que las sedes se cargaron
+                        Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            try
+                            {
+                                Logger.Agregar($"🔍 Intentando seleccionar sede: {ConfiguracionSistema.IdSedeActual} - {ConfiguracionSistema.NombreSedeActual}");
+                                cmbSedes.SelectedValue = ConfiguracionSistema.IdSedeActual;
+                                Logger.Agregar($"✅ Sede seleccionada: {ConfiguracionSistema.NombreSedeActual}");
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Agregar($"⚠️ No se pudo seleccionar la sede automáticamente: {ex.Message}");
+                            }
+                        }));
+                    }
+                    
+                    Logger.Agregar($"✅ Configuración actual cargada: {ConfiguracionSistema.NombreEmpresaActual} - {ConfiguracionSistema.NombreSedeActual}");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Agregar($"❌ Error al cargar configuración actual: {ex.Message}");
+                }
             }
         }
 
-        private void BtnGuardarSede_Click(object sender, RoutedEventArgs e)
+        private void BtnGuardarConfiguracion_Click(object sender, RoutedEventArgs e)
         {
-            if (cmbSedes.SelectedItem is not Sede sedeSeleccionada)
+            // VALIDACIÓN
+            if (cmbEmpresas.SelectedItem is not Empresa empresa)
+            {
+                MostrarToast("⚠️ Por favor selecciona una empresa antes de guardar.");
+                return;
+            }
+
+            if (cmbSedes.SelectedItem is not Sede sede)
             {
                 MostrarToast("⚠️ Por favor selecciona una sede antes de guardar.");
                 return;
             }
 
+            // GUARDAR CONFIGURACIÓN
             ConfiguracionSistema.EstablecerConfiguracion(
-                ConfiguracionSistema.IdEmpresaActual ?? 0,
-                ConfiguracionSistema.NombreEmpresaActual ?? "Empresa desconocida",
-                sedeSeleccionada.IdSede,
-                sedeSeleccionada.Nombre
+                empresa.IdEmpresa,
+                empresa.Nombre,
+                sede.IdSede,
+                sede.Nombre
             );
 
-            Logger.Agregar($"✅ Sede guardada: {sedeSeleccionada.Nombre}");
+            Logger.Agregar($"✅ Configuración guardada: {empresa.Nombre} - {sede.Nombre}");
             MostrarLogEnPantalla();
 
-            MostrarToast($"✅ Sede '{sedeSeleccionada.Nombre}' guardada correctamente");
+            MostrarToast($"✅ Configuración guardada correctamente: {empresa.Nombre} - {sede.Nombre}");
+        }
+
+        private void BtnConfigurarHorario_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Logger.Agregar("🕒 Abriendo configuración de horario por defecto...");
+                MostrarLogEnPantalla();
+
+                var ventanaHorario = new ConfiguracionHorarioWindow();
+                var resultado = ventanaHorario.ShowDialog();
+
+                if (resultado == true)
+                {
+                    Logger.Agregar("✅ Configuración de horario actualizada correctamente");
+                    MostrarToast("✅ Configuración de horario guardada correctamente");
+                }
+                else
+                {
+                    Logger.Agregar("❌ Configuración de horario cancelada por el usuario");
+                }
+
+                MostrarLogEnPantalla();
+            }
+            catch (Exception ex)
+            {
+                Logger.Agregar($"❌ Error al abrir configuración de horario: {ex.Message}");
+                MostrarToast("❌ Error al abrir configuración de horario");
+                MostrarLogEnPantalla();
+            }
         }
 
         private void BtnDescargarLog_Click(object sender, RoutedEventArgs e)
@@ -112,6 +241,7 @@ namespace BiomentricoHolding.Views.Configuracion
                 mainWindow.MostrarGifBienvenida();
             }
         }
+
         private async void MostrarToast(string mensaje)
         {
             try
@@ -143,38 +273,32 @@ namespace BiomentricoHolding.Views.Configuracion
                 }
                 else if (mensaje.StartsWith("📥") || mensaje.StartsWith("🧹"))
                 {
-                    ToastBorder.Background = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#2563EB")); // Azul
-                    ToastIcon.Text = mensaje.StartsWith("📥") ? "📥" : "🧹";
+                    ToastBorder.Background = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3B82F6")); // Azul
+                    ToastIcon.Text = "ℹ️";
                 }
                 else
                 {
                     ToastBorder.Background = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#059669")); // Verde por defecto
-                    ToastIcon.Text = "✅";
+                    ToastIcon.Text = "ℹ️";
                 }
-                
+
                 ToastContainer.Visibility = Visibility.Visible;
 
-                await Task.Delay(3000); // Espera 3 segundos
-
+                // Ocultar después de 3 segundos
+                await Task.Delay(3000);
                 ToastContainer.Visibility = Visibility.Collapsed;
             }
             catch (Exception ex)
             {
-                // Silenciar errores de actualización de UI
                 System.Diagnostics.Debug.WriteLine("Error al mostrar toast: " + ex.Message);
             }
         }
+
         private void BtnLimpiarLog_Click(object sender, RoutedEventArgs e)
         {
-            var resultado = MessageBox.Show("¿Estás seguro que deseas limpiar el log del sistema?", "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
-            if (resultado == MessageBoxResult.Yes)
-            {
-                Logger.Limpiar();
-                MostrarLogEnPantalla();
-                MostrarToast("🧹 Log del sistema limpiado correctamente");
-            }
+            Logger.Limpiar();
+            MostrarLogEnPantalla();
+            MostrarToast("🧹 Log del sistema limpiado correctamente");
         }
-
     }
 }

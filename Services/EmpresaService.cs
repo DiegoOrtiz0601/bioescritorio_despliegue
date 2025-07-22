@@ -1,4 +1,4 @@
-﻿using BiomentricoHolding.Data.DataBaseRegistro_Test; // Namespace donde quedó la clase `Empresa`
+﻿using BiomentricoHolding.Data; // Namespace donde quedó la clase `Empresa`
 
 namespace BiomentricoHolding.Services
 {

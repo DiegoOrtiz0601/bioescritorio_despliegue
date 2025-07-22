@@ -58,16 +58,35 @@
                     <TextBlock Text="⚙ Configuración del Sistema" Foreground="White" FontWeight="Bold" FontSize="18" Margin="15,0"/>
                 </DockPanel>
 
-                <!-- Selección de sede -->
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,25,0,15">
-                    <TextBlock Text="📍 Sede actual:" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center" Margin="0,0,15,0" Foreground="#374151"/>
-                    <ComboBox x:Name="cmbSedes" Width="350" Height="38" FontSize="14" Background="#F9FAFB" BorderThickness="2" BorderBrush="#E5E7EB" Padding="12,0" VerticalContentAlignment="Center"/>
-                    <Button Style="{StaticResource BotonRojoRedondeado}" Click="BtnGuardarSede_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="💾" Margin="0,0,8,0"/>
-                            <TextBlock Text="Guardar"/>
-                        </StackPanel>
-                    </Button>
+                <!-- Selección de empresa y sede -->
+                <StackPanel Grid.Row="1" Margin="0,25,0,15">
+                    <!-- Empresa -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                        <TextBlock Text="🏢 Empresa actual:" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center" Margin="0,0,15,0" Foreground="#374151"/>
+                        <ComboBox x:Name="cmbEmpresas" Width="350" Height="38" FontSize="14" Background="#F9FAFB" BorderThickness="2" BorderBrush="#E5E7EB" Padding="12,8" VerticalContentAlignment="Center"/>
+                    </StackPanel>
+                    
+                    <!-- Sede -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                        <TextBlock Text="📍 Sede actual:" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center" Margin="0,0,15,0" Foreground="#374151" Width="140"/>
+                        <ComboBox x:Name="cmbSedes" Width="350" Height="38" FontSize="14" Background="#F9FAFB" BorderThickness="2" BorderBrush="#E5E7EB" Padding="12,8" VerticalContentAlignment="Center"/>
+                        <Button Style="{StaticResource BotonRojoRedondeado}" Click="BtnGuardarConfiguracion_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="💾" Margin="0,0,8,0"/>
+                                <TextBlock Text="Guardar"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                    
+                    <!-- Horario por defecto -->
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource BotonRojoRedondeado}" Click="BtnConfigurarHorario_Click" Width="180">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🕒" Margin="0,0,8,0"/>
+                                <TextBlock Text="Horario por Defecto"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
                 </StackPanel>
 
                 <!-- Log del sistema -->

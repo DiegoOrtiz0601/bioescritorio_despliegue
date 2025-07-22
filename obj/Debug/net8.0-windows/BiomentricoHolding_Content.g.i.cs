@@ -13,6 +13,7 @@
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("sonidos/advertencia.wav")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("sonidos/correcto.wav")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("sonidos/error.wav")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("config.json")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("assets/logo.gif")]
 
 

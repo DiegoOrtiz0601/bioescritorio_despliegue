@@ -1,4 +1,4 @@
-﻿using BiomentricoHolding.Data.DataBaseRegistro_Test;
+﻿using BiomentricoHolding.Data;
 using BiomentricoHolding.Services;
 using BiomentricoHolding.Utils;
 using DPFP;
@@ -11,7 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Media;
-using EmpleadoModel = BiomentricoHolding.Data.DataBaseRegistro_Test.Empleado;
+using EmpleadoModel = BiomentricoHolding.Data.Empleado;
 
 namespace BiomentricoHolding.Views.Empleado
 {
@@ -178,7 +178,7 @@ namespace BiomentricoHolding.Views.Empleado
                     return false;
                 }
 
-                if (empleado.Documento <= 0)
+                if (string.IsNullOrEmpty(empleado.Documento))
                 {
                     return false;
                 }
@@ -400,7 +400,7 @@ namespace BiomentricoHolding.Views.Empleado
                     diaSemana = diaSemana == 0 ? 1 : diaSemana;
 
                     var asignacion = db.AsignacionHorarios
-                        .FirstOrDefault(a => a.IdEmpleado == empleado.IdEmpleado && a.Estado);
+                        .FirstOrDefault(a => a.Documento == empleado.Documento && a.Estado);
 
                     if (asignacion == null)
                     {
@@ -440,34 +440,25 @@ namespace BiomentricoHolding.Views.Empleado
                     TimeOnly salida = detalle.HoraFin;
 
                     var yaMarcoHoy = db.Marcaciones.Any(m =>
-                        m.IdEmpleado == empleado.IdEmpleado &&
+                        m.Documento == empleado.Documento &&
                         m.FechaHora.Date == hoy.Date);
 
                     int tipoMarcacion;
                     string tipoTexto;
                     
-                    // LÓGICA MEJORADA: Priorizar si es primera marcación del día
-                    if (!yaMarcoHoy)
+                    // Si está dentro del rango de salida o después de la salida → Salida
+                    if (horaActual >= salida.AddHours(-1))
                     {
-                        // Si es la primera marcación del día, siempre es ENTRADA
-                        tipoMarcacion = 1;
-                        tipoTexto = "✅ Entrada";
-                        
-                        // Si está en rango de salida, registrar advertencia
-                        if (horaActual >= salida.AddHours(-1))
-                        {
-                            Logger.Agregar($"⚠️ {empleado.Nombres} realizó su entrada tarde (en rango de salida). Hora: {horaActual:HH:mm}, Salida programada: {salida:HH:mm}");
-                        }
-                    }
-                    else if (horaActual >= salida.AddHours(-1))
-                    {
-                        // Si ya marcó hoy y está en rango de salida → SALIDA
                         tipoMarcacion = 2;
                         tipoTexto = "🚪 Salida";
                     }
+                    else if (!yaMarcoHoy)
+                    {
+                        tipoMarcacion = 1;
+                        tipoTexto = "✅ Entrada";
+                    }
                     else
                     {
-                        // Si ya marcó hoy pero no está en rango de salida → NOVEDAD
                         tipoMarcacion = 3;
                         tipoTexto = "⚠️ Novedad";
                         Logger.Agregar($"⚠️ {empleado.Nombres} realizó una marcación fuera de horario. Se registrará como NOVEDAD.");
@@ -476,7 +467,7 @@ namespace BiomentricoHolding.Views.Empleado
                     var cincoMinutosAtras = hoy.AddMinutes(-5);
 
                     var ultima = db.Marcaciones
-                    .Where(m => m.IdEmpleado == empleado.IdEmpleado && m.FechaHora >= cincoMinutosAtras)
+                    .Where(m => m.Documento == empleado.Documento && m.FechaHora >= cincoMinutosAtras)
                      .OrderByDescending(m => m.FechaHora)
                     .FirstOrDefault();
 
@@ -503,12 +494,20 @@ namespace BiomentricoHolding.Views.Empleado
                         return;
                     }
 
+                    // Validación adicional para asegurar que tenemos los valores de configuración
+                    if (!ConfiguracionSistema.IdEmpresaActual.HasValue || !ConfiguracionSistema.IdSedeActual.HasValue)
+                    {
+                        Logger.Agregar("❌ Error: Valores de configuración no disponibles");
+                        new MensajeWindow("❌ Error en la configuración del sistema.\nContacte al administrador.", 3, "error").ShowDialog();
+                        return;
+                    }
+
                     var marcacion = new Marcacione
                     {
-                        IdEmpleado = empleado.IdEmpleado,
+                        Documento = empleado.Documento,
                         FechaHora = hoy,
-                        IdEmpresa = empleado.IdEmpresa,
-                        IdSede = ConfiguracionSistema.IdSedeActual.Value,
+                        IdEmpresaMarcacion = ConfiguracionSistema.IdEmpresaActual.Value,
+                        IdSedeMarcacion = ConfiguracionSistema.IdSedeActual.Value,
                         IdTipoMarcacion = tipoMarcacion,
                         IdAsignacion = asignacion.Id
                     };
@@ -519,7 +518,7 @@ namespace BiomentricoHolding.Views.Empleado
                     lblTipoMarcacion.Text = $"Marcación: {tipoTexto}";
                     lblEstadoMarcacion.Text = "🎉 Registrado Exitosamente";
 
-                    Logger.Agregar($"📝 {tipoTexto} registrada para {empleado.Nombres} ({empleado.Documento})");
+                    Logger.Agregar($"📝 {tipoTexto} registrada para {empleado.Nombres} ({empleado.Documento}) - Empresa: {ConfiguracionSistema.NombreEmpresaActual}, Sede: {ConfiguracionSistema.NombreSedeActual}");
 
                     var ventanaConfirmacion = new MensajeWindow($"🎉 ¡Marcación Registrada!\n\n📋 Tipo: {tipoTexto}\n🕐 Hora: {hoy:HH:mm:ss}\n📅 Fecha: {hoy:dd/MM/yyyy}", 3);
                     ventanaConfirmacion.Closed += async (s, e) =>

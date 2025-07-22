@@ -155,6 +155,36 @@
                             </StackPanel>
                         </Grid>
 
+                        <!-- Jefe -->
+                        <Grid Margin="10,0,10,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Column="0" Grid.Row="0"
+                                       Text="👨‍💼 Jefe"
+                                       FontWeight="SemiBold"
+                                       Foreground="#374151"
+                                       Margin="0,0,0,8"/>
+
+                            <ComboBox x:Name="cbJefe"
+                                     Grid.Column="0"
+                                     Grid.Row="1"
+                                     Height="38"
+                                     VerticalContentAlignment="Center"
+                                     Background="#F9FAFB"
+                                     BorderThickness="2"
+                                     BorderBrush="#E5E7EB"
+                                     Padding="12,0"
+                                     FontSize="14"
+                                     DisplayMemberPath="Nombre"
+                                     SelectedValuePath="IdUsuario"/>
+                        </Grid>
+
                         <!-- Botones + imagen -->
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="0,30,0,0">
                             <!-- Botones de acción -->

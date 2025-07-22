@@ -1,4 +1,4 @@
-﻿using BiomentricoHolding.Data.DataBaseRegistro_Test;
+﻿using BiomentricoHolding.Data;
 using BiomentricoHolding.Utils;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,7 +7,7 @@ namespace BiomentricoHolding.Views.Configuracion
 {
     public partial class SeleccionEmpresaSedeWindow : Window
     {
-        private readonly DataBaseRegistro_TestDbContext _context = AppSettings.GetContextUno();
+        private readonly BiometricoDbContext _context = AppSettings.GetContextUno();
 
         public SeleccionEmpresaSedeWindow()
         {
@@ -27,14 +27,20 @@ namespace BiomentricoHolding.Views.Configuracion
         {
             if (cmbEmpresas.SelectedValue is int idEmpresa)
             {
-                var sedes = _context.Sedes
-                    .Where(s => s.IdEmpresa == idEmpresa)
+                // Obtener sedes a través de la tabla intermedia SedeCiudadEmpresaArea
+                var sedes = _context.SedeCiudadEmpresaAreas
+                    .Where(sca => sca.IdEmpresa == idEmpresa)
+                    .Select(sca => sca.IdSedeNavigation)
+                    .Where(s => s.Estado == true || s.Estado == null) // Incluir null como válido
+                    .Distinct()
                     .OrderBy(s => s.Nombre)
                     .ToList();
 
                 cmbSedes.ItemsSource = sedes;
                 cmbSedes.DisplayMemberPath = "Nombre";
                 cmbSedes.SelectedValuePath = "IdSede";
+                
+                Logger.Agregar($"🔍 Configuración inicial - Sedes cargadas: {sedes.Count} sedes para empresa {idEmpresa}");
             }
         }
 

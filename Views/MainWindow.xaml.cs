@@ -11,7 +11,7 @@ using System.Windows.Media.Animation;
 using WpfAnimatedGif;
 using BiomentricoHolding.Views.Reportes;
 using System.Reflection;
-using BiomentricoHolding.Data.DataBaseRegistro_Test;
+using BiomentricoHolding.Data;
 
 namespace BiomentricoHolding
 {
@@ -42,20 +42,21 @@ namespace BiomentricoHolding
 
                 string versionTexto = $"{version.Major}.{version.Minor}.{version.Build}";
 
-                using var db = AppSettings.GetContextUno();
-                bool existe = db.VersionSistema.Any(v => v.NumeroVersion == versionTexto);
+                // TODO: VersionSistema no existe en el nuevo contexto
+                // using var db = AppSettings.GetContextUno();
+                // bool existe = db.VersionSistema.Any(v => v.NumeroVersion == versionTexto);
 
-                if (!existe)
-                {
-                    db.VersionSistema.Add(new VersionSistema
-                    {
-                        NumeroVersion = versionTexto,
-                        FechaPublicacion = DateTime.Now,
-                        Comentarios = "Registro automático"
-                    });
-                    db.SaveChanges();
-                    Logger.Agregar($"✅ Versión registrada automáticamente: {versionTexto}");
-                }
+                // if (!existe)
+                // {
+                //     db.VersionSistema.Add(new VersionSistema
+                //     {
+                //         NumeroVersion = versionTexto,
+                //         FechaPublicacion = DateTime.Now,
+                //         Comentarios = "Registro automático"
+                //     });
+                //     db.SaveChanges();
+                //     Logger.Agregar($"✅ Versión registrada automáticamente: {versionTexto}");
+                // }
             }
             catch (Exception ex)
             {
@@ -413,31 +414,7 @@ namespace BiomentricoHolding
             ventanaCaptura.ShowDialog();
         }
 
-        private void BtnConsultarRegistros_Click(object sender, RoutedEventArgs e)
-        {
-            var login = new MiniLoginWindow();
-            bool? resultado = login.ShowDialog();
 
-            if (resultado == true && login.AccesoPermitido && login.IdUsuarioAutenticado == 12)
-            {
-                Logger.Agregar("📊 Acceso autorizado al módulo de Reportes por el usuario 12");
-                MainContent.Content = new ReportesView();
-                imgBienvenida.Visibility = Visibility.Collapsed;
-                MainContent.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Logger.Agregar("🚫 Acceso denegado al módulo de Reportes");
-
-                var mensaje = new MensajeWindow("⚠️ Solo el usuario autorizado puede acceder a esta sección.", false, "Cerrar", "")
-                {
-                    Owner = this // 👈 Asegura que el mensaje aparezca al frente
-                };
-
-                mensaje.ShowDialog();
-            }
-
-        }
 
 
 
@@ -516,18 +493,20 @@ namespace BiomentricoHolding
                     lblVersion.Text = $"Versión: {versionTexto}";
                 }
 
-                using var db = AppSettings.GetContextUno();
-                var ultimaVersion = db.VersionSistema
-                    .OrderByDescending(v => v.Id)
-                    .FirstOrDefault();
+                // Obtener fecha de publicación desde la fecha de compilación del assembly
+                var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                var buildDate = assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyMetadataAttribute), false)
+                    .OfType<System.Reflection.AssemblyMetadataAttribute>()
+                    .FirstOrDefault(a => a.Key == "BuildDate");
 
-                if (ultimaVersion != null)
+                if (buildDate != null && DateTime.TryParse(buildDate.Value, out DateTime fechaPublicacion))
                 {
-                    lblFechaPublicacion.Text = $"Fecha Publicación: {ultimaVersion.FechaPublicacion:dd/MM/yyyy}";
+                    lblFechaPublicacion.Text = $"Fecha Publicación: {fechaPublicacion:dd/MM/yyyy}";
                 }
                 else
                 {
-                    lblFechaPublicacion.Text = "Fecha Publicación: N/D";
+                    // Si no hay fecha de compilación, usar la fecha actual
+                    lblFechaPublicacion.Text = $"Fecha Publicación: {DateTime.Now:dd/MM/yyyy}";
                 }
             }
             catch (Exception ex)

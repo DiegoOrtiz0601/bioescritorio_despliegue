@@ -419,8 +419,12 @@ C:\Users\Diego Mora\Documents\biometric\biometricoVML\obj\Debug\net8.0-windows\B
 C:\Users\Diego Mora\Documents\biometric\biometricoVML\obj\Debug\net8.0-windows\ref\BiomentricoHolding.dll
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\bin\Debug\net8.0-windows\appsettings.json
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\bin\Debug\net8.0-windows\Assets\huella-dactilar.ico
+C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\bin\Debug\net8.0-windows\config.json
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\bin\Debug\net8.0-windows\Assets\logo.gif
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\bin\Debug\net8.0-windows\BiomentricoHolding.exe
+C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\bin\Debug\net8.0-windows\Sonidos\advertencia.wav
+C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\bin\Debug\net8.0-windows\Sonidos\correcto.wav
+C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\bin\Debug\net8.0-windows\Sonidos\error.wav
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\bin\Debug\net8.0-windows\BiomentricoHolding.deps.json
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\bin\Debug\net8.0-windows\BiomentricoHolding.runtimeconfig.json
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\bin\Debug\net8.0-windows\BiomentricoHolding.dll
@@ -582,6 +586,7 @@ C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\bin\Debug\net8.0-windows\DPFPVerNET.dll
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\BiomentricoHolding.csproj.AssemblyReference.cache
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\Views\Configuracion\BienvenidaInicialWindow.baml
+C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\Views\Configuracion\ConfiguracionHorarioWindow.baml
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\Views\Configuracion\SeleccionEmpresaSedeWindow.baml
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\Views\Empleado\AsignarHorarioWindow.baml
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\Views\Empleado\CapturaEntradaSalidaWindow.baml
@@ -595,6 +600,7 @@ C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\App.baml
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\Views\Configuracion\BienvenidaInicialWindow.g.cs
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\Views\Configuracion\ConfiguracionControl.g.cs
+C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\Views\Configuracion\ConfiguracionHorarioWindow.g.cs
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\Views\Configuracion\ConfiguracionInicialWindow.g.cs
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\Views\Configuracion\SeleccionEmpresaSedeWindow.g.cs
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\Views\Empleado\AsignarHorarioWindow.g.cs
@@ -620,13 +626,10 @@ C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\BiomentricoHolding.AssemblyInfoInputs.cache
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\BiomentricoHolding.AssemblyInfo.cs
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\BiomentricoHolding.csproj.CoreCompileInputs.cache
+C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\BiomentricoHolding.sourcelink.json
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\Biomentr.ECE52810.Up2Date
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\BiomentricoHolding.dll
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\refint\BiomentricoHolding.dll
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\BiomentricoHolding.pdb
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\BiomentricoHolding.genruntimeconfig.cache
 C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\ref\BiomentricoHolding.dll
-C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\obj\Debug\net8.0-windows\BiomentricoHolding.sourcelink.json
-C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\bin\Debug\net8.0-windows\Sonidos\advertencia.wav
-C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\bin\Debug\net8.0-windows\Sonidos\correcto.wav
-C:\Users\Diego VML\Documents\Proyectos\BiometricoEscritorio\SistemaBiometricoWPF\bin\Debug\net8.0-windows\Sonidos\error.wav

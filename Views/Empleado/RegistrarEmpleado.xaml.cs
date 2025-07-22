@@ -1,13 +1,14 @@
-﻿using BiomentricoHolding.Data.DataBaseRegistro_Test;
+﻿using BiomentricoHolding.Data;
 using BiomentricoHolding.Services;
 using BiomentricoHolding.Utils;
 using DPFP;
+using Microsoft.EntityFrameworkCore;
 using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using EmpleadoModel = BiomentricoHolding.Data.DataBaseRegistro_Test.Empleado;
+using EmpleadoModel = BiomentricoHolding.Data.Empleado;
 
 namespace BiomentricoHolding.Views.Empleado
 {
@@ -23,6 +24,7 @@ namespace BiomentricoHolding.Views.Empleado
             Logger.Agregar("🔄 Abriendo formulario de Registro de Empleado");
             CargarEmpresas();
             CargarTiposEmpleado();
+            CargarJefes();
         }
 
         private void CargarEmpresas()
@@ -41,6 +43,34 @@ namespace BiomentricoHolding.Views.Empleado
             cbTipoEmpleado.SelectedValuePath = "Id";
         }
 
+        private void CargarJefes()
+        {
+            using var context = AppSettings.GetContextUno();
+            
+            // Primero, obtener información sobre los roles disponibles
+            var roles = context.Roles.ToList();
+            Logger.Agregar($"🔍 Roles disponibles: {string.Join(", ", roles.Select(r => $"{r.IdRol}:{r.Rol}"))}");
+            
+            // Cargar usuarios activos con sus roles
+            var usuarios = context.Usuarios
+                .Where(u => u.Estado == true)
+                .Include(u => u.IdRolUsuarioNavigation)
+                .OrderBy(u => u.NombreUsuario)
+                .ToList();
+            
+            // Filtrar solo usuarios con IdRolUsuario = 3 y Estado = true
+            var jefes = usuarios.Where(u => u.IdRolUsuario == 3 && u.Estado == true)
+                               .ToList();
+            
+            Logger.Agregar($"👨‍💼 Usuarios con rol 3 (jefes) encontrados: {jefes.Count}");
+            
+            cbJefe.ItemsSource = jefes;
+            cbJefe.DisplayMemberPath = "Nombre";
+            cbJefe.SelectedValuePath = "IdUsuario";
+            
+            Logger.Agregar($"👨‍💼 Jefes cargados: {jefes.Count} jefes disponibles");
+        }
+
         private void cbEmpresa_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             cbSede.ItemsSource = null;
@@ -50,9 +80,20 @@ namespace BiomentricoHolding.Views.Empleado
             {
                 Logger.Agregar($"🏢 Empresa seleccionada: ID {idEmpresa}");
                 using var context = AppSettings.GetContextUno();
-                cbSede.ItemsSource = context.Sedes.Where(s => s.IdEmpresa == idEmpresa).OrderBy(s => s.Nombre).ToList();
+                
+                // Obtener sedes a través de la tabla intermedia SedeCiudadEmpresaArea
+                var sedes = context.SedeCiudadEmpresaAreas
+                    .Where(sca => sca.IdEmpresa == idEmpresa)
+                    .Select(sca => sca.IdSedeNavigation)
+                    .Where(s => s.Estado == true || s.Estado == null) // Incluir null como válido
+                    .Distinct()
+                    .OrderBy(s => s.Nombre)
+                    .ToList();
+                
+                cbSede.ItemsSource = sedes;
                 cbSede.DisplayMemberPath = "Nombre";
                 cbSede.SelectedValuePath = "IdSede";
+                Logger.Agregar($"📍 Sedes cargadas: {sedes.Count} sedes para empresa {idEmpresa}");
             }
         }
 
@@ -60,13 +101,23 @@ namespace BiomentricoHolding.Views.Empleado
         {
             cbArea.ItemsSource = null;
 
-            if (cbSede.SelectedValue is int idSede)
+            if (cbSede.SelectedValue is int idSede && cbEmpresa.SelectedValue is int idEmpresa)
             {
-                Logger.Agregar($"📍 Sede seleccionada: ID {idSede}");
+                Logger.Agregar($"📍 Sede seleccionada: ID {idSede}, Empresa: ID {idEmpresa}");
                 using var context = AppSettings.GetContextUno();
-                cbArea.ItemsSource = context.Areas.Where(a => a.IdSede == idSede).OrderBy(a => a.Nombre).ToList();
+                
+                // Obtener áreas a través de la tabla intermedia SedeCiudadEmpresaArea
+                var areas = context.SedeCiudadEmpresaAreas
+                    .Where(sca => sca.IdSede == idSede && sca.IdEmpresa == idEmpresa)
+                    .Select(sca => sca.IdAreaNavigation)
+                    .Where(a => a.Estado == true || a.Estado == null) // Incluir null como válido
+                    .OrderBy(a => a.Nombre)
+                    .ToList();
+                
+                cbArea.ItemsSource = areas;
                 cbArea.DisplayMemberPath = "Nombre";
                 cbArea.SelectedValuePath = "IdArea";
+                Logger.Agregar($"📍 Áreas cargadas: {areas.Count} áreas para sede {idSede} y empresa {idEmpresa}");
             }
         }
 
@@ -81,9 +132,9 @@ namespace BiomentricoHolding.Views.Empleado
                 return;
             }
 
-            if (int.TryParse(cedulaTexto, out int cedula))
+            if (!string.IsNullOrWhiteSpace(cedulaTexto))
             {
-                if (CedulaExiste(cedula))
+                if (CedulaExiste(cedulaTexto))
                 {
                     icon.Visibility = Visibility.Collapsed;
                     MostrarModalUsuarioYaExiste(cedulaTexto);
@@ -100,7 +151,7 @@ namespace BiomentricoHolding.Views.Empleado
             }
         }
 
-        private bool CedulaExiste(int cedula)
+        private bool CedulaExiste(string cedula)
         {
             using var context = AppSettings.GetContextUno();
             return context.Empleados.Any(e => e.Documento == cedula);
@@ -114,10 +165,9 @@ namespace BiomentricoHolding.Views.Empleado
             if (result == true && modal.Modificar)
             {
                 Logger.Agregar($"✏️ Usuario con cédula {cedulaTexto} desea modificar datos.");
-                if (int.TryParse(cedulaTexto, out int cedula))
                 {
                     using var context = AppSettings.GetContextUno();
-                    var empleado = context.Empleados.FirstOrDefault(e => e.Documento == cedula);
+                    var empleado = context.Empleados.FirstOrDefault(e => e.Documento == cedulaTexto);
                     if (empleado != null)
                     {
                         esModificacion = true;
@@ -129,14 +179,15 @@ namespace BiomentricoHolding.Views.Empleado
                         txtNombres.Text = empleado.Nombres;
                         txtApellidos.Text = empleado.Apellidos;
                         txtCedula.Text = empleado.Documento.ToString();
+                        // Cargar los datos de empresa, sede y área desde los campos del empleado
                         cbEmpresa.SelectedValue = empleado.IdEmpresa;
-                        cbTipoEmpleado.SelectedValue = empleado.IdTipoEmpleado;
-
                         cbEmpresa_SelectionChanged(null, null);
                         cbSede.SelectedValue = empleado.IdSede;
-
                         cbSede_SelectionChanged(null, null);
                         cbArea.SelectedValue = empleado.IdArea;
+                        Logger.Agregar($"📄 Datos de empresa/sede/área cargados para empleado {empleado.Documento}");
+                        cbTipoEmpleado.SelectedValue = empleado.IdTipoEmpleado;
+                        cbJefe.SelectedValue = empleado.IdJefe;
 
                         if (empleado.Huella != null)
                         {
@@ -159,7 +210,8 @@ namespace BiomentricoHolding.Views.Empleado
                 cbEmpresa.SelectedItem == null ||
                 cbSede.SelectedItem == null ||
                 cbArea.SelectedItem == null ||
-                cbTipoEmpleado.SelectedItem == null)
+                cbTipoEmpleado.SelectedItem == null ||
+                cbJefe.SelectedItem == null)
             {
                 new MensajeWindow("⚠️ Todos los campos son obligatorios.", false, "Entendido", "").ShowDialog();
                 return;
@@ -173,7 +225,7 @@ namespace BiomentricoHolding.Views.Empleado
 
             try
             {
-                int cedula = int.Parse(txtCedula.Text.Trim());
+                string cedula = txtCedula.Text.Trim();
                 byte[] huellaBytes = HuellaHelper.ConvertirTemplateABytes(_huellaCapturada);
 
                 using var context = AppSettings.GetContextUno();
@@ -191,13 +243,24 @@ namespace BiomentricoHolding.Views.Empleado
                     empleado.Nombres = txtNombres.Text.Trim();
                     empleado.Apellidos = txtApellidos.Text.Trim();
                     empleado.Documento = cedula;
-                    empleado.IdEmpresa = (int)cbEmpresa.SelectedValue;
-                    empleado.IdSede = (int)cbSede.SelectedValue;
-                    empleado.IdArea = (int)cbArea.SelectedValue;
                     empleado.IdTipoEmpleado = (int)cbTipoEmpleado.SelectedValue;
                     empleado.Huella = huellaBytes;
                     empleado.FechaIngreso = DateTime.Now;
-                    empleado.Estado = true;  // 🔥 AGREGA ESTA LÍNEA AQUÍ
+                    empleado.Estado = true;
+                    // Actualizar los campos requeridos por la base de datos
+                    empleado.IdEmpresa = cbEmpresa.SelectedValue is int idEmp ? idEmp : 1;
+                    empleado.IdSede = cbSede.SelectedValue is int idSed ? idSed : 1;
+                    empleado.IdArea = cbArea.SelectedValue is int idAr ? idAr : 1;
+                    empleado.IdEnrolador = ObtenerIdEnroladorValido(context);
+                    empleado.IdJefe = cbJefe.SelectedValue is int idJef ? idJef : (int?)null;
+
+                    // Actualizar la relación en la tabla intermedia SedeCiudadEmpresaArea
+                    if (cbEmpresa.SelectedValue is int idEmpresa && 
+                        cbSede.SelectedValue is int idSede && 
+                        cbArea.SelectedValue is int idArea)
+                    {
+                        CrearRelacionSedeCiudadEmpresaArea(context, idEmpresa, idSede, idArea, empleado.Documento);
+                    }
 
                     Logger.Agregar($"✏️ [{SesionSistema.NombreUsuario}] Modificando empleado ID {empleado.IdEmpleado}");
                 }
@@ -208,23 +271,34 @@ namespace BiomentricoHolding.Views.Empleado
                         Documento = cedula,
                         Nombres = txtNombres.Text.Trim(),
                         Apellidos = txtApellidos.Text.Trim(),
-                        IdEmpresa = (int)cbEmpresa.SelectedValue,
-                        IdSede = (int)cbSede.SelectedValue,
-                        IdArea = (int)cbArea.SelectedValue,
                         IdTipoEmpleado = (int)cbTipoEmpleado.SelectedValue,
                         Huella = huellaBytes,
                         Estado = true,
                         FechaIngreso = DateTime.Now,
-                        IdUsuario = SesionSistema.IdUsuarioActual
+                        // Asignar valores a los campos requeridos por la base de datos
+                        IdEmpresa = cbEmpresa.SelectedValue is int idEmp ? idEmp : 1,
+                        IdSede = cbSede.SelectedValue is int idSed ? idSed : 1,
+                        IdArea = cbArea.SelectedValue is int idAr ? idAr : 1,
+                        IdEnrolador = ObtenerIdEnroladorValido(context),
+                        IdJefe = cbJefe.SelectedValue is int idJef ? idJef : (int?)null
                     };
 
                     context.Empleados.Add(empleado);
                     context.SaveChanges();
                     idEmpleadoActual = empleado.IdEmpleado;
 
+                    // Guardar la relación en la tabla intermedia SedeCiudadEmpresaArea
+                    if (cbEmpresa.SelectedValue is int idEmpresa && 
+                        cbSede.SelectedValue is int idSede && 
+                        cbArea.SelectedValue is int idArea)
+                    {
+                        CrearRelacionSedeCiudadEmpresaArea(context, idEmpresa, idSede, idArea, empleado.Documento);
+                    }
+
                     Logger.Agregar($"🆕 [{SesionSistema.NombreUsuario}] Nuevo empleado registrado: {empleado.Nombres} {empleado.Apellidos} ({empleado.Documento})");
                 }
 
+                // Guardar el empleado ANTES de la lógica de horarios
                 context.SaveChanges();
 
                 int idEmpleado = empleado.IdEmpleado;
@@ -232,7 +306,7 @@ namespace BiomentricoHolding.Views.Empleado
                 string nombreTipoEmpleado = context.TiposEmpleados.FirstOrDefault(t => t.Id == idTipoEmpleado)?.Nombre ?? "";
                 bool esRotativo = nombreTipoEmpleado.Trim().ToLower() == "enrolado rotativo";
 
-                var asignacionExistente = context.AsignacionHorarios.FirstOrDefault(a => a.IdEmpleado == idEmpleado && a.Estado);
+                                    var asignacionExistente = context.AsignacionHorarios.FirstOrDefault(a => a.Documento == empleado.Documento && a.Estado);
                 bool usarHorarioEspecifico = false;
 
                 if (asignacionExistente != null)
@@ -250,10 +324,15 @@ namespace BiomentricoHolding.Views.Empleado
                         usarHorarioEspecifico = esRotativo;
                         Logger.Agregar($"🔁 [{SesionSistema.NombreUsuario}] Reemplazando horario activo para empleado ID {idEmpleado}");
                     }
-                    else
+                    else if (resultado == true && !decision.Resultado)
                     {
                         Logger.Agregar($"✅ [{SesionSistema.NombreUsuario}] Se mantuvo el horario actual para empleado ID {idEmpleado}");
-                        FinalizarGuardado(esModificacion);
+                        // No hacer return aquí, continuar al final para finalizar el guardado
+                    }
+                    else
+                    {
+                        // Usuario cerró la ventana (X) - no hacer nada
+                        Logger.Agregar($"❌ [{SesionSistema.NombreUsuario}] Canceló la operación de horario para empleado ID {idEmpleado}");
                         return;
                     }
                 }
@@ -264,12 +343,15 @@ namespace BiomentricoHolding.Views.Empleado
                         : "¿Deseas crear un horario genérico para este colaborador?";
 
                     var decision = new MensajeWindow(mensaje, true, "Crear", "Cancelar");
-                    if (decision.ShowDialog() == true && decision.Resultado)
+                    bool? resultado = decision.ShowDialog();
+                    
+                    if (resultado == true && decision.Resultado)
                     {
                         usarHorarioEspecifico = esRotativo;
                     }
                     else
                     {
+                        // Usuario canceló o cerró la ventana
                         Logger.Agregar($"🚫 [{SesionSistema.NombreUsuario}] Canceló la creación de horario para empleado ID {idEmpleado}");
                         return;
                     }
@@ -282,7 +364,7 @@ namespace BiomentricoHolding.Views.Empleado
                     {
                         var asignacion = new AsignacionHorario
                         {
-                            IdEmpleado = idEmpleado,
+                            Documento = empleado.Documento,
                             FechaInicio = DateOnly.FromDateTime(DateTime.Today),
                             FechaFin = DateOnly.FromDateTime(new DateTime(DateTime.Today.Year, 12, 31)),
                             FechaCreacion = DateTime.Now,
@@ -318,7 +400,7 @@ namespace BiomentricoHolding.Views.Empleado
                 {
                     var asignacion = new AsignacionHorario
                     {
-                        IdEmpleado = idEmpleado,
+                        Documento = empleado.Documento,
                         FechaInicio = DateOnly.FromDateTime(DateTime.Today),
                         FechaFin = DateOnly.FromDateTime(new DateTime(DateTime.Today.Year, 12, 31)),
                         FechaCreacion = DateTime.Now,
@@ -336,35 +418,17 @@ namespace BiomentricoHolding.Views.Empleado
                         {
                             IdAsignacion = asignacion.Id,
                             DiaSemana = dia,
-                            HoraInicio = TimeOnly.Parse("07:00:00"),
-                            HoraFin = (dia == 6 || dia == 7) ? TimeOnly.Parse("16:30:00") : TimeOnly.Parse("17:30:00")
+                            HoraInicio = ConfiguracionSistema.ObtenerHoraInicio(dia),
+                            HoraFin = ConfiguracionSistema.ObtenerHoraFin(dia)
                         });
                     }
 
                     context.SaveChanges();
-                    Logger.Agregar($"🕒 [{SesionSistema.NombreUsuario}] Horario genérico asignado para empleado ID {idEmpleado}");
+                    Logger.Agregar($"🕒 [{SesionSistema.NombreUsuario}] Horario genérico configurable asignado para empleado ID {idEmpleado}");
                 }
 
-                string mensajeFinal = esModificacion ? "Empleado actualizado correctamente." : "Empleado registrado correctamente.";
-                new MensajeWindow($"✅ {mensajeFinal}", false, "Aceptar", "").ShowDialog();
-
-                if (!esModificacion)
-                {
-                    var confirmacion = new MensajeWindow("¿Deseas agregar otro empleado?", true, "Sí", "No");
-                    if (confirmacion.ShowDialog() == true)
-                    {
-                        LimpiarFormulario();
-                    }
-                    else
-                    {
-                        if (Application.Current.MainWindow.FindName("MainContent") is ContentControl contenedor)
-                            contenedor.Content = null;
-                    }
-                }
-
-                esModificacion = false;
-                idEmpleadoActual = 0;
-                LimpiarFormulario();
+                // Finalizar el guardado del empleado
+                FinalizarGuardado(esModificacion);
             }
             catch (Exception ex)
             {
@@ -445,6 +509,7 @@ namespace BiomentricoHolding.Views.Empleado
             cbSede.ItemsSource = null;
             cbArea.ItemsSource = null;
             cbTipoEmpleado.SelectedIndex = -1;
+            cbJefe.SelectedIndex = -1;
             _huellaCapturada = null;
             iconCedulaCheck.Visibility = Visibility.Collapsed;
             Logger.Agregar("🧹 Formulario de empleado limpiado");
@@ -494,6 +559,69 @@ namespace BiomentricoHolding.Views.Empleado
                     textBox.SelectionStart = cursorPos;
                 }
             }
+        }
+
+        private void CrearRelacionSedeCiudadEmpresaArea(BiometricoDbContext context, int idEmpresa, int idSede, int idArea, string documentoEmpleado)
+        {
+            // Buscar la relación existente o crear una nueva
+            var relacionExistente = context.SedeCiudadEmpresaAreas
+                .FirstOrDefault(sca => sca.IdEmpresa == idEmpresa && 
+                                       sca.IdSede == idSede && 
+                                       sca.IdArea == idArea);
+            
+            if (relacionExistente == null)
+            {
+                // Obtener el IdCiudad desde una relación existente o usar valor por defecto
+                var relacionExistenteConCiudad = context.SedeCiudadEmpresaAreas
+                    .Where(sca => sca.IdSede == idSede)
+                    .FirstOrDefault();
+                int idCiudad = relacionExistenteConCiudad?.IdCiudad ?? 1; // Usar IdCiudad de relación existente o 1 por defecto
+                
+                // Crear nueva relación si no existe
+                var nuevaRelacion = new SedeCiudadEmpresaArea
+                {
+                    IdEmpresa = idEmpresa,
+                    IdSede = idSede,
+                    IdArea = idArea,
+                    IdCiudad = idCiudad
+                };
+                context.SedeCiudadEmpresaAreas.Add(nuevaRelacion);
+                context.SaveChanges();
+                Logger.Agregar($"🔗 [{SesionSistema.NombreUsuario}] Nueva relación SedeCiudadEmpresaArea creada para empleado {documentoEmpleado}");
+            }
+        }
+
+        private int ObtenerIdEnroladorValido(BiometricoDbContext context)
+        {
+            // Primero intentar usar el usuario actual de la sesión
+            if (SesionSistema.IdUsuarioActual > 0)
+            {
+                var usuarioActual = context.Usuarios.FirstOrDefault(u => u.IdUsuario == SesionSistema.IdUsuarioActual);
+                if (usuarioActual != null)
+                {
+                    return SesionSistema.IdUsuarioActual;
+                }
+            }
+
+            // Si no hay usuario actual válido, buscar cualquier usuario activo
+            var usuarioValido = context.Usuarios.FirstOrDefault(u => u.Estado == true);
+            if (usuarioValido != null)
+            {
+                Logger.Agregar($"⚠️ Usando usuario alternativo como enrolador: {usuarioValido.NombreUsuario}");
+                return usuarioValido.IdUsuario;
+            }
+
+            // Si no hay usuarios activos, usar el primer usuario disponible
+            var primerUsuario = context.Usuarios.FirstOrDefault();
+            if (primerUsuario != null)
+            {
+                Logger.Agregar($"⚠️ Usando primer usuario disponible como enrolador: {primerUsuario.NombreUsuario}");
+                return primerUsuario.IdUsuario;
+            }
+
+            // Último recurso: usar ID 1 (asumiendo que existe)
+            Logger.Agregar("⚠️ No se encontraron usuarios válidos, usando ID 1 como enrolador");
+            return 1;
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using BiomentricoHolding.Utils;
 using BiomentricoHolding.Views.Configuracion;
+using BiomentricoHolding.Views;
 using System.Windows;
+using System.IO;
 
 namespace BiomentricoHolding
 {
@@ -32,8 +34,7 @@ namespace BiomentricoHolding
                     // 4. Si aún no está configurado, cerrar la app
                     if (resultado != true || !ConfiguracionSistema.EstaConfigurado)
                     {
-                        MessageBox.Show("❌ El sistema no puede iniciar sin configuración.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
+                        new MensajeWindow("❌ El sistema no puede iniciar sin configuración.", false, "Cerrar", "").ShowDialog();
                         return;
                     }
                 }
@@ -47,19 +48,33 @@ namespace BiomentricoHolding
 
                 DispatcherUnhandledException += (sender, args) =>
                 {
-                    MessageBox.Show("💥 Excepción no controlada:\n\n" +
+                    new MensajeWindow("💥 Excepción no controlada:\n\n" +
                    $"Mensaje: {args.Exception.Message}\n\n" +
                    $"StackTrace:\n{args.Exception.StackTrace}",
-                   "ERROR",
-                   MessageBoxButton.OK,
-                   MessageBoxImage.Error);
+                   false, "Cerrar", "").ShowDialog();
                     args.Handled = true;
                 };
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error crítico: {ex.Message}", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                new MensajeWindow($"Error crítico: {ex.Message}", false, "Cerrar", "").ShowDialog();
             }
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            try
+            {
+                // La configuración se guarda automáticamente en GuardarConfiguracion()
+                // No necesitamos hacer nada adicional aquí
+                Logger.Agregar("✅ Aplicación cerrada correctamente");
+            }
+            catch (Exception ex)
+            {
+                Logger.Agregar($"❌ Error al cerrar la aplicación: {ex.Message}");
+            }
+
+            base.OnExit(e);
         }
     }
 }

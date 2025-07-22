@@ -1,5 +1,4 @@
-﻿using BiomentricoHolding.Data.DataBaseRegistro_Test;
-using BiomentricoHolding.Data.dbVMLTalentoHumano;
+﻿using BiomentricoHolding.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -22,22 +21,16 @@ namespace BiomentricoHolding
             return configuration.GetConnectionString(name);
         }
 
-        public static DataBaseRegistro_TestDbContext GetContextUno()
+        // Nuevo contexto principal apuntando a BiometricoDesarrollo
+        public static BiometricoDbContext GetContextUno()
         {
             var connection = GetConnectionString("MainDbConnection");
-            var options = new DbContextOptionsBuilder<DataBaseRegistro_TestDbContext>()
+            var options = new DbContextOptionsBuilder<BiometricoDbContext>()
                 .UseSqlServer(connection)
                 .Options;
-            return new DataBaseRegistro_TestDbContext(options);
+            return new BiometricoDbContext(options);
         }
 
-        public static dbVMLTalentoHumanoDbContext GetContextDos()
-        {
-            var connection = GetConnectionString("SecondaryDbConnection");
-            var options = new DbContextOptionsBuilder<dbVMLTalentoHumanoDbContext>()
-                .UseSqlServer(connection)
-                .Options;
-            return new dbVMLTalentoHumanoDbContext(options);
-        }
+       
     }
 }

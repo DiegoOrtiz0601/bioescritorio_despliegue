@@ -3,8 +3,32 @@
   "WorkspaceRootPath": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|c:\\users\\diego vml\\documents\\proyectos\\biometricoescritorio\\sistemabiometricowpf\\appsetting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|solutionrelative:appsetting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|c:\\users\\diego vml\\documents\\proyectos\\biometricoescritorio\\sistemabiometricowpf\\views\\empleado\\registrarempleado.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|solutionrelative:views\\empleado\\registrarempleado.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Data\\BiometricoDbContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Data\\BiometricoDbContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|c:\\users\\diego vml\\documents\\proyectos\\biometricoescritorio\\sistemabiometricowpf\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Models\\BiometricoDbContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Models\\BiometricoDbContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|c:\\users\\diego vml\\documents\\proyectos\\biometricoescritorio\\sistemabiometricowpf\\views\\empleado\\capturaentradasalidawindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|solutionrelative:views\\empleado\\capturaentradasalidawindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|c:\\users\\diego vml\\documents\\proyectos\\biometricoescritorio\\sistemabiometricowpf\\views\\configuracion\\configuracioncontrol.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{062F2259-EA59-4609-A11F-611517935927}|BiomentricoHolding.csproj|solutionrelative:views\\configuracion\\configuracioncontrol.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,20 +38,96 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "RegistrarEmpleado.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Views\\Empleado\\RegistrarEmpleado.xaml.cs",
+              "RelativeDocumentMoniker": "Views\\Empleado\\RegistrarEmpleado.xaml.cs",
+              "ToolTip": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Views\\Empleado\\RegistrarEmpleado.xaml.cs",
+              "RelativeToolTip": "Views\\Empleado\\RegistrarEmpleado.xaml.cs",
+              "ViewState": "AgIAAGYAAAAAAAAAAAAowHAAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-21T18:06:37.992Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "AppSetting.cs",
+              "DocumentMoniker": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\AppSetting.cs",
+              "RelativeDocumentMoniker": "AppSetting.cs",
+              "ToolTip": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\AppSetting.cs",
+              "RelativeToolTip": "AppSetting.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-21T17:06:05.573Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "BiometricoDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Data\\BiometricoDbContext.cs",
+              "RelativeDocumentMoniker": "Data\\BiometricoDbContext.cs",
+              "ToolTip": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Data\\BiometricoDbContext.cs",
+              "RelativeToolTip": "Data\\BiometricoDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-21T17:04:28.598Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "BiometricoDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Models\\BiometricoDbContext.cs",
+              "RelativeDocumentMoniker": "Models\\BiometricoDbContext.cs",
+              "ToolTip": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Models\\BiometricoDbContext.cs",
+              "RelativeToolTip": "Models\\BiometricoDbContext.cs",
+              "ViewState": "AgIAANsAAAAAAAAAAAAUwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-21T17:02:21.923Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-07-21T03:26:30.946Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ConfiguracionControl.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Views\\Configuracion\\ConfiguracionControl.xaml.cs",
+              "RelativeDocumentMoniker": "Views\\Configuracion\\ConfiguracionControl.xaml.cs",
+              "ToolTip": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Views\\Configuracion\\ConfiguracionControl.xaml.cs",
+              "RelativeToolTip": "Views\\Configuracion\\ConfiguracionControl.xaml.cs",
+              "ViewState": "AgIAAI8AAAAAAAAAAADwv58AAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-17T17:53:06.399Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "CapturaEntradaSalidaWindow.xaml.cs",
               "DocumentMoniker": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Views\\Empleado\\CapturaEntradaSalidaWindow.xaml.cs",
               "RelativeDocumentMoniker": "Views\\Empleado\\CapturaEntradaSalidaWindow.xaml.cs",
               "ToolTip": "C:\\Users\\Diego VML\\Documents\\Proyectos\\BiometricoEscritorio\\SistemaBiometricoWPF\\Views\\Empleado\\CapturaEntradaSalidaWindow.xaml.cs",
               "RelativeToolTip": "Views\\Empleado\\CapturaEntradaSalidaWindow.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUCAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAICAAAAAAAAAAAiwB4CAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T16:56:23.616Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-15T16:56:23.616Z"
             }
           ]
         }

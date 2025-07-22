@@ -1,6 +1,54 @@
 {
-  "IdEmpresa": 3,
-  "NombreEmpresa": "E-LEARNING VIP",
-  "IdSede": 38,
-  "NombreSede": "UNICENTRO"
+  "IdEmpresa": 4,
+  "NombreEmpresa": "CDA DISTRITAL S.A.S.",
+  "IdSede": 1,
+  "NombreSede": "BOGOTA",
+  "HorarioPorDefecto": {
+    "Dias": [
+      {
+        "Id": 1,
+        "HoraInicio": "07:00",
+        "HoraFin": "17:30",
+        "NombreDia": "DOMINGO"
+      },
+      {
+        "Id": 2,
+        "HoraInicio": "07:00",
+        "HoraFin": "17:30",
+        "NombreDia": "LUNES"
+      },
+      {
+        "Id": 3,
+        "HoraInicio": "07:00",
+        "HoraFin": "17:30",
+        "NombreDia": "MARTES"
+      },
+      {
+        "Id": 4,
+        "HoraInicio": "07:00",
+        "HoraFin": "17:30",
+        "NombreDia": "MIERCOLES"
+      },
+      {
+        "Id": 5,
+        "HoraInicio": "07:00",
+        "HoraFin": "17:30",
+        "NombreDia": "JUEVES"
+      },
+      {
+        "Id": 6,
+        "HoraInicio": "07:00",
+        "HoraFin": "13:00",
+        "NombreDia": "VIERNES"
+      },
+      {
+        "Id": 7,
+        "HoraInicio": "07:00",
+        "HoraFin": "17:30",
+        "NombreDia": "SABADO"
+      }
+    ],
+    "FechaModificacion": "2025-01-17T10:00:00-05:00",
+    "ModificadoPor": "Sistema"
+  }
 }

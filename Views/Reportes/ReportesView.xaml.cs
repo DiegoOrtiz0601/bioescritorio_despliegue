@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using BiomentricoHolding.Data.DataBaseRegistro_Test;
+using BiomentricoHolding.Data;
 
 namespace BiomentricoHolding.Views.Reportes
 {
     public partial class ReportesView : UserControl
     {
-        private readonly DataBaseRegistro_TestDbContext _context = AppSettings.GetContextUno();
+        private readonly BiometricoDbContext _context = AppSettings.GetContextUno();
 
         public ReportesView()
         {
@@ -77,7 +77,16 @@ namespace BiomentricoHolding.Views.Reportes
             cbSede.Items.Clear();
             cbSede.Items.Add(new ComboBoxItem { Content = "Sede (opcional)", IsEnabled = false, IsSelected = true });
 
-            foreach (var sede in _context.Sedes.Where(s => s.IdEmpresa == idEmpresa))
+            // Obtener sedes a través de la tabla intermedia SedeCiudadEmpresaArea
+            var sedes = _context.SedeCiudadEmpresaAreas
+                .Where(sca => sca.IdEmpresa == idEmpresa)
+                .Select(sca => sca.IdSedeNavigation)
+                .Where(s => s.Estado == true)
+                .Distinct()
+                .OrderBy(s => s.Nombre)
+                .ToList();
+
+            foreach (var sede in sedes)
             {
                 cbSede.Items.Add(new ComboBoxItem { Content = sede.Nombre, Tag = sede.IdSede });
             }
@@ -96,9 +105,21 @@ namespace BiomentricoHolding.Views.Reportes
             cbArea.Items.Clear();
             cbArea.Items.Add(new ComboBoxItem { Content = "Área (opcional)", IsEnabled = false, IsSelected = true });
 
-            foreach (var area in _context.Areas.Where(a => a.IdSede == idSede))
+            // Obtener el ID de la empresa seleccionada
+            if (cbEmpresa.SelectedItem is ComboBoxItem empresaItem && empresaItem.Tag is int idEmpresa)
             {
-                cbArea.Items.Add(new ComboBoxItem { Content = area.Nombre, Tag = area.IdArea });
+                // Obtener áreas a través de la tabla intermedia SedeCiudadEmpresaArea
+                var areas = _context.SedeCiudadEmpresaAreas
+                    .Where(sca => sca.IdSede == idSede && sca.IdEmpresa == idEmpresa)
+                    .Select(sca => sca.IdAreaNavigation)
+                    .Where(a => a.Estado == true)
+                    .OrderBy(a => a.Nombre)
+                    .ToList();
+
+                foreach (var area in areas)
+                {
+                    cbArea.Items.Add(new ComboBoxItem { Content = area.Nombre, Tag = area.IdArea });
+                }
             }
         }
 
@@ -115,8 +136,8 @@ namespace BiomentricoHolding.Views.Reportes
 
         private void GenerarReporteEmpleado()
         {
-            string doc = txtDocumento.Text?.Trim();
-            if (!long.TryParse(doc, out long documento))
+            string documento = txtDocumento.Text?.Trim();
+            if (string.IsNullOrWhiteSpace(documento))
             {
                 MessageBox.Show("Ingrese un número de documento válido.");
                 return;
@@ -147,7 +168,7 @@ namespace BiomentricoHolding.Views.Reportes
 
             // Agrupar las marcaciones por fecha
             var marcacionesDia = _context.Marcaciones
-                .Where(m => m.IdEmpleado == empleado.IdEmpleado && m.FechaHora >= desde && m.FechaHora <= hasta)
+                .Where(m => m.Documento == empleado.Documento && m.FechaHora >= desde && m.FechaHora <= hasta)
                 .GroupBy(m => m.FechaHora.Date)
                 .ToList();
 
@@ -157,7 +178,8 @@ namespace BiomentricoHolding.Views.Reportes
                 return;
             }
 
-            var horarios = _context.EmpleadosHorarios.Where(h => h.EmpleadoId == empleado.IdEmpleado).ToList();
+            var asignacion = _context.AsignacionHorarios.FirstOrDefault(a => a.Documento == empleado.Documento && a.Estado);
+            var horarios = asignacion != null ? _context.DetalleHorarios.Where(d => d.IdAsignacion == asignacion.Id).ToList() : new List<DetalleHorario>();
             var tipos = _context.TiposMarcacions.ToList();
 
             var resultado = new List<dynamic>();
@@ -177,8 +199,8 @@ namespace BiomentricoHolding.Views.Reportes
                 diaSemana = diaSemana == 0 ? 1 : diaSemana;
                 var horario = horarios.FirstOrDefault(h => h.DiaSemana == diaSemana);
 
-                var horaEsperadaEntrada = horario?.Inicio.ToTimeSpan();
-                var horaEsperadaSalida = horario?.Fin.ToTimeSpan();
+                var horaEsperadaEntrada = horario?.HoraInicio.ToTimeSpan();
+                var horaEsperadaSalida = horario?.HoraFin.ToTimeSpan();
 
                 // Calcular el retraso para entrada y salida en minutos enteros
                 int retrasoEntrada = 0, retrasoSalida = 0;
@@ -211,17 +233,22 @@ namespace BiomentricoHolding.Views.Reportes
 
                 // Hora de entrada/salida real y esperada
                 string horaEsperada = $"{horaEsperadaEntrada?.ToString(@"hh\:mm") ?? "-"} / {horaEsperadaSalida?.ToString(@"hh\:mm") ?? "-"}";
-                string horaEntradaReal = entrada != null ? $"{entrada.FechaHora.ToString("HH:mm")} ({_context.Sedes.FirstOrDefault(s => s.IdSede == entrada.IdSede)?.Nombre})" : "-";
-                string horaSalidaReal = salida != null ? $"{salida.FechaHora.ToString("HH:mm")} ({_context.Sedes.FirstOrDefault(s => s.IdSede == salida.IdSede)?.Nombre})" : "-";
+                string horaEntradaReal = entrada != null ? $"{entrada.FechaHora.ToString("HH:mm")} ({_context.Sedes.FirstOrDefault(s => s.IdSede == entrada.IdSedeMarcacion)?.Nombre})" : "-";
+                string horaSalidaReal = salida != null ? $"{salida.FechaHora.ToString("HH:mm")} ({_context.Sedes.FirstOrDefault(s => s.IdSede == salida.IdSedeMarcacion)?.Nombre})" : "-";
+
+                // Obtener la información de empresa, sede y área desde los campos directos del empleado
+                var empresaNombre = _context.Empresas.FirstOrDefault(x => x.IdEmpresa == empleado.IdEmpresa)?.Nombre ?? "N/A";
+                var sedeNombre = _context.Sedes.FirstOrDefault(x => x.IdSede == empleado.IdSede)?.Nombre ?? "N/A";
+                var areaNombre = _context.Areas.FirstOrDefault(x => x.IdArea == empleado.IdArea)?.Nombre ?? "N/A";
 
                 // Agregar la información a los resultados
                 resultado.Add(new
                 {
                     Documento = empleado.Documento.ToString(),
                     NombreCompleto = empleado.Nombres + " " + empleado.Apellidos,
-                    Empresa = _context.Empresas.FirstOrDefault(x => x.IdEmpresa == empleado.IdEmpresa)?.Nombre,
-                    Sede = _context.Sedes.FirstOrDefault(x => x.IdSede == empleado.IdSede)?.Nombre,
-                    Area = _context.Areas.FirstOrDefault(x => x.IdArea == empleado.IdArea)?.Nombre,
+                    Empresa = empresaNombre,
+                    Sede = sedeNombre,
+                    Area = areaNombre,
                     DiaSemana = fecha.ToString("dddd"),
                     Fecha = fecha.ToString("dd/MM/yyyy"),
                     HoraEntradaReal = horaEntradaReal,

@@ -1,4 +1,4 @@
-﻿using BiomentricoHolding.Data.DataBaseRegistro_Test;
+﻿using BiomentricoHolding.Data;
 
 namespace BiomentricoHolding.Utils
 {
